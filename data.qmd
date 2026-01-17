@@ -410,116 +410,134 @@ Hay varias formas comunes de dividir los datos en conjuntos de entrenamiento y d
 -   caTools
 -   dplyr
 
-En primer lugar os presentamos una forma muy manual de hacerlo. A veces es la más sencilla de entender y la más inmediata de razonar.
+En este ejemplo usaremos **datos reales de tenis (WTA)** a nivel **partido**. En este apartado no consideramos **la componente temporal** (no usamos la fecha del partido), por lo que una partición aleatoria es aceptable para ilustrar el procedimiento.
+
+En primer lugar presentamos una forma manual. A veces es la más sencilla de entender y la más inmediata de razonar.
 
 ```{r}
-#| label: particion0
+#| label: particion0_tenis
 #| include: true
 #| warning: false
 #| echo: true
 
-# cargamos los datos
-library(palmerpenguins)
-data(penguins)
-dim(penguins)
+library(tidyverse)
 
-# mediante una semilla conseguimos que el ejercicio sea reproducible
+# Cargamos datos reales (un partido por fila)
+
+url_matches <- "https://raw.githubusercontent.com/JeffSackmann/tennis_wta/master/wta_matches_2023.csv"
+tennis <- read_csv(url_matches, show_col_types = FALSE)
+
+dim(tennis)
+
+# Selección mínima de variables (sin fecha)
+
+tennis_ml <- tennis %>%
+select(surface, draw_size, winner_rank, loser_rank, winner_age, loser_age) %>%
+drop_na()
+
+dim(tennis_ml)
+
+# Semilla para reproducibilidad
+
 set.seed(1)
 
-# creamos índices
-ntotal <- dim(penguins)[1]
+# Creamos índices
+
+ntotal <- nrow(tennis_ml)
 indices <- 1:ntotal
-ntrain <- ntotal * .7
-indices.train <- sample(indices, ntrain, replace = FALSE)
-indices.test <- indices[-indices.train]
+ntrain <- floor(ntotal * 0.7)
 
-# Usamos el 70% de la base de datos como conjunto de entrenamiento y el resto como conjunto de test
-train  <- penguins[indices.train, ]
-test   <- penguins[indices.test, ]
+indices.train <- sample(indices, ntrain, replace = FALSE)
+indices.test  <- indices[-indices.train]
+
+# 70% train, 30% test
+
+train <- tennis_ml[indices.train, ]
+test  <- tennis_ml[indices.test, ]
 
 dim(train)
 dim(test)
+
 ```
 
-Otra forma alternativa.
+Otra forma alternativa, usando una máscara booleana:
 
 ```{r}
-#| label: particion1
+#| label: particion1_tenis
 #| include: true
 #| warning: false
 #| echo: true
 
-# cargamos los datos
-data(penguins)
-dim(penguins)
-
-# mediante una semilla conseguimos que el ejercicio sea reproducible
 set.seed(1)
 
-# Usamos el 70% de la base de datos como conjunto de entrenamiento y el resto como conjunto de test
-sample <- sample(c(TRUE, FALSE), nrow(penguins), replace=TRUE, prob=c(0.7,0.3))
-train  <- penguins[sample, ]
-test   <- penguins[!sample, ]
+sample_mask <- sample(c(TRUE, FALSE), nrow(tennis_ml),
+replace = TRUE, prob = c(0.7, 0.3))
+
+train <- tennis_ml[sample_mask, ]
+test  <- tennis_ml[!sample_mask, ]
 
 dim(train)
 dim(test)
+
 ```
+
 
 Usando el paquete `caTools` indicamos directamente el ratio de entrenamiento.
 
+Si queremos que la partición conserve proporciones similares respecto a una variable categórica, podemos estratificar. En tenis, una variable natural para ello es la superficie (`surface`).
+
 ```{r}
-#| label: particion2
+#| label: particion2_tenis
 #| include: true
 #| warning: false
 #| echo: true
 
-# cargamos el paquete
 library(caTools)
 
-# cargamos los datos
-data(penguins)
-dim(penguins)
-
-# mediante una semilla conseguimos que el ejercicio sea reproducible
 set.seed(1)
 
-# Usamos el 70% de la base de datos como conjunto de entrenamiento y el resto como conjunto de test
-sample <- sample.split(penguins$species, SplitRatio=0.7)
-train  <- subset(penguins, sample==TRUE)
-test   <- subset(penguins, sample==FALSE)
+# Estratificación por superficie
+
+split <- sample.split(tennis_ml$surface, SplitRatio = 0.7)
+
+train <- subset(tennis_ml, split == TRUE)
+test  <- subset(tennis_ml, split == FALSE)
 
 dim(train)
 dim(test)
+
+# Comprobación rápida del balance por superficie (opcional)
+
+prop.table(table(train$surface))
+prop.table(table(test$surface))
+
 ```
 
-Podemos emplear el paquete dplyr tal y como sigue:
+Podemos emplear el paquete `dplyr` tal y como sigue:
 
 ```{r}
-#| label: particion3
+#| label: particion3_tenis
 #| include: true
 #| warning: false
 #| echo: true
 
-# cargamos el paquete
 library(dplyr)
 
-# cargamos los datos
-data(penguins)
-dim(penguins)
-
-# mediante una semilla conseguimos que el ejercicio sea reproducible
 set.seed(1)
 
-# creamos una variable índice
-penguins$id <- 1:nrow(penguins)
+# Creamos un identificador de fila para poder recuperar el complemento con anti_join
 
-# Usamos el 70% de la base de datos como conjunto de entrenamiento y el resto como conjunto de test
-train  <- penguins %>% dplyr::sample_frac(0.7)
-test   <- dplyr::anti_join(penguins, train, by = 'id')
+tennis_ml <- tennis_ml %>% mutate(id = row_number())
+
+train <- tennis_ml %>% sample_frac(0.7)
+test  <- anti_join(tennis_ml, train, by = "id")
 
 dim(train)
 dim(test)
+
 ```
+
+Nota: si el objetivo del proyecto fuese **predecir partidos futuros** o incorporar el **ranking como serie temporal**, entonces esta partición aleatoria podría introducir inconsistencias (fuga temporal). En ese caso habría que usar una partición por fecha o por torneo.
 
 ::: {.callout-tip title="Para no olvidar"}
 ## Truquito para no olvidar
