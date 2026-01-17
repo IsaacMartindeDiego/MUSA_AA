@@ -752,7 +752,7 @@ La **ética** en la ciencia de datos se refiere a la conducta y las decisiones �
 
 -   **Equidad**: Los análisis deben ser imparciales y justos, evitando la discriminación y el sesgo en los resultados.
 
--   **Responsabilidad**: Los profesionales de datos deben asumir la responsabilidad de los posibles impactos de sus decisiones y comunicar sus hallazgos de manera precisa y ética.
+-   **Responsabilidad**: Los profesionales de datos deben asumir la responsabilidad de los posibles impactos de sus decisiones y comunicar sus hallazgos de manera precisa y ética. En el deporte, los resultados de los modelos pueden influir directamente en decisiones con impacto personal y profesional (selección de jugadores, minutos de juego, contratos, retorno tras lesión). Es éticamente necesario evitar el uso acrítico de modelos automáticos y garantizar que los resultados se interpreten como apoyo a la decisión, no como sustitutos del criterio técnico y humano.
 :::
 
 ::: {.callout-note collapse="true"}
@@ -765,6 +765,11 @@ La **privacidad** de los datos se refiere a la protección de la información pe
 -   **Seguridad de los datos**: Los datos deben ser almacenados y transmitidos de manera segura para evitar la exposición no autorizada.
 
 -   **Cumplimiento normativo**: Es necesario cumplir con leyes y regulaciones de privacidad, como el Reglamento General de Protección de Datos (RGPD) en la Unión Europea.
+
+-   **Datos biométricos y de salud**: En el ámbito deportivo se manejan con frecuencia datos especialmente sensibles (frecuencia cardíaca, carga fisiológica, historial de lesiones). Estos datos requieren un nivel de protección reforzado y un consentimiento explícito, dado su impacto potencial en la salud y la empleabilidad del deportista.
+
+-   **Reutilización y cesión de datos**: Es habitual que los datos deportivos se reutilicen con fines distintos a los inicialmente previstos (investigación, scouting, difusión pública). Debe garantizarse que cualquier uso secundario sea compatible con el consentimiento original y con la normativa vigente.
+
 :::
 
 ::: {.callout-note collapse="true"}
@@ -779,4 +784,10 @@ La **seguridad** de los datos es la protección contra el acceso no autorizado, 
 -   **Monitoreo y detección de amenazas**: Implementar sistemas de monitoreo y detección de amenazas para identificar y responder a posibles ataques o violaciones de seguridad.
 
 -   **Respaldo de datos**: Realizar copias de seguridad regulares para evitar la pérdida de datos en caso de incidentes de seguridad.
+
+-   **Protección frente a usos competitivos indebidos**: En contextos deportivos profesionales, una brecha de seguridad no solo implica pérdida de privacidad, sino también desventajas competitivas (filtración de datos de entrenamiento, tácticas o estado físico). La seguridad de los datos debe considerarse también desde una perspectiva estratégica y competitiva.
 :::
+
+En el análisis de datos deportivos, las decisiones técnicas nunca son neutras: afectan a personas, a su salud, a su carrera profesional y a la equidad de la competición.
+
+---

@@ -100,53 +100,19 @@ La comprensión del problema que estamos abordando representa una de las primera
 
 ## Un primer vistazo a los datos
 
-En este tema vamos a trabajar con los datos de [**Bank Marketing**](https://archive.ics.uci.edu/dataset/222/bank+marketing) del repositorio UCI. En primer lugar debemos comprender el problema. ¿Qué sabes del marketing bancario? En el caso que nos ocupa, los datos están relacionados con campañas de marketing directo (llamadas telefónicas) de una entidad bancaria portuguesa. El objetivo de la clasificación es *predecir si el cliente suscribirá un depósito* a plazo (variable objetivo).
+En este tema vamos a trabajar con **datos reales de partidos de tenis (WTA)**. El objetivo no es “adivinar el futuro” (no consideramos el tiempo), sino aprender a **entender** el dataset y formular hipótesis razonables.
 
+Como ejemplo de problema, definimos una **tarea de clasificación**:
+
+-   Variable objetivo: `winner_is_better_rank`, vale `1` si la ganadora tenía mejor ranking que la perdedora; `0` si ganó la jugadora peor rankeada, es decir, *upset*.
 Las variables que debemos estudiar son:
 
-Variables de entrada:
+Esto es útil porque es una definición objetiva con la información disponible, y permite discutir “sorpresas” y contexto deportivo (superficie, edad, etc.).
 
-\# datos del cliente bancario:
 
-1.  edad (variable numérica)
-
-2.  empleo : tipo de empleo (variable categórica con las siguientes categorías: "admin.", "desconocido", "desempleado", "directivo", "empleada del hogar", "empresario", "estudiante", "obrero", "autónomo", "jubilado", "técnico", "servicios")
-
-3.  estado civil : estado civil (variable categórica con categorías: "casado", "divorciado", "soltero"; nota: "divorciado" significa divorciado o viudo)
-
-4.  educación (variable categórica con categorías: "desconocida", "secundaria", "primaria", "terciaria")
-
-5.  impago: ¿tiene un crédito impagado? (variable binaria con dos posibles valores: "sí", "no")
-
-6.  saldo: saldo medio anual, en euros (variable numérica)
-
-7.  vivienda: ¿tiene préstamo para vivienda? (variable binaria: "sí", "no")
-
-8.  préstamo: ¿tiene préstamo personal? (variable binaria: "sí", "no")
-
-    \# relacionado con el último contacto de la campaña actual:
-
-9.  contacto: tipo de comunicación del contacto (variable categórica: "desconocido", "teléfono", "móvil")
-
-10. día: día del mes del último contacto (variable numérica)
-
-11. mes: mes del año del último contacto (variable categórica: "ene", "feb", "mar", ..., "nov", "dic")
-
-12. duración: duración del último contacto, en segundos (variable numérica)
-
-\# otros atributos
-
-13. campaña: número de contactos realizados durante esta campaña y para este cliente (variable numérica, incluye el último contacto)
-
-14. pdays: número de días transcurridos desde que el cliente fue contactado por última vez en una campaña anterior (variable numérica, -1 significa que el cliente no fue contactado previamente)
-
-15. previous: número de contactos realizados antes de esta campaña y para este cliente (variable numérica)
-
-16. poutcome: resultado de la campaña de marketing anterior (variable categórica: "desconocido", "otro", "fracaso", "éxito")
-
-\# Variable de salida (objetivo deseado):
-
-17 - y: ¿ha suscrito el cliente un depósito a plazo? (variable binaria: "sí", "no")
+::: {.callout-important title="Para recordar"}
+En deporte, la variable objetivo debe definirse con cuidado. “Rendimiento” puede significar cosas muy distintas según el contexto. En tenis, incluso “ganar” puede depender de superficie, nivel del torneo o emparejamiento.
+:::
 
 ::: {.callout-important title="Para recordar"}
 A veces (muchas veces) la descripción que encontramos en una primera etapa no coincide al completo con los datos que luego nos entrega el cliente.
@@ -157,10 +123,19 @@ En otras ocasiones no se dispone de la descripción de las variables. En ese cas
 Leemos los datos con R.
 
 ```{r}
-#| label: leer_datos1
+#| label: leer_datos_tenis
 #| include: true
 #| warning: false
 #| echo: true
+
+library(tidyverse)
+
+url_matches <- "https://raw.githubusercontent.com/JeffSackmann/tennis_wta/master/wta_matches_2023.csv"
+tennis <- read_csv(url_matches, show_col_types = FALSE)
+
+dim(tennis)
+tennis <- as_tibble(tennis)
+tennis
 
 library(tidyverse)
 bank = read.csv('https://raw.githubusercontent.com/rafiag/DTI2020/main/data/bank.csv')
@@ -169,24 +144,84 @@ bank=as.tibble(bank)
 bank
 ```
 
-Disponemos de más de 10000 observaciones y un total de 17 variables.
+Disponemos de un conjunto de datos con **un partido por fila** y múltiples variables asociadas al torneo y a las jugadoras (ranking, edad, etc.).
 
 ## Tipo de variables
 
 Para averiguar qué tipo de variables manejamos, ejecutar:
 
 ```{r}
-#| label: tipo_variables
+#| label: tipo_variables_tenis
 #| include: true
 #| warning: false
 #| echo: true
 
-str(bank)
+str(tennis)
 ```
 
-Creamos las particiones sobre los datos y trabajamos sobre la partición de entrenamiento.
+En este ejemplo trabajaremos con un subconjunto de variables habituales en análisis deportivo:
+
+- `surface` (categórica)
+
+- `draw_size` (numérica discreta)
+
+- `winner_rank`, `loser_rank` (numéricas discretas; cuanto menor, mejor ranking)
+
+- `winner_age`, `loser_age` (numéricas continuas)
+
+- variable objetivo construida a partir del ranking
+
+Creamos el dataset de trabajo y eliminamos observaciones con faltantes en las variables seleccionadas.
 
 ```{r}
+#| label: preparar_dataset_tenis
+#| include: true
+#| warning: false
+#| echo: true
+
+tennis_ml <- tennis %>%
+select(surface, draw_size, winner_rank, loser_rank, winner_age, loser_age) %>%
+drop_na() %>%
+mutate(
+winner_is_better_rank = as.integer(winner_rank < loser_rank),
+rank_diff = loser_rank - winner_rank,
+age_diff = winner_age - loser_age
+)
+
+dim(tennis_ml)
+tennis_ml
+```
+
+**Particiones de datos (train/test/valid)**
+
+Como en este ejemplo no estamos modelando tiempo, podemos particionar aleatoriamente. Usaremos 50% entrenamiento, 25% test y 25% validación.
+
+```{r}
+#| label: particiones_tenis
+#| include: true
+#| warning: false
+#| echo: true
+
+set.seed(2138)
+
+n <- nrow(tennis_ml)
+indices <- seq_len(n)
+
+indices.train <- sample(indices, size = floor(n * 0.5), replace = FALSE)
+resto <- setdiff(indices, indices.train)
+
+indices.test <- sample(resto, size = floor(n * 0.25), replace = FALSE)
+indices.valid <- setdiff(resto, indices.test)
+
+tennis.train <- tennis_ml[indices.train, ]
+tennis.test  <- tennis_ml[indices.test, ]
+tennis.valid <- tennis_ml[indices.valid, ]
+
+dim(tennis.train)
+dim(tennis.test)
+dim(tennis.valid)
+
+
 # Parciticionamos los datos
 set.seed(2138)
 n=dim(bank)[1]
@@ -203,53 +238,81 @@ bank.valid=bank[indices.valid,]
 ::: {.callout-caution title="Atrévete"}
 ## Atrévete
 
-¿Te has hecho (ya) alguna pregunta sobre los datos? Si es así, no esperes más, busca la respuesta!
+Antes de dibujar nada: ¿qué crees que pasará con los upsets?
+¿Son igual de frecuentes en todas las superficies? ¿Influye la diferencia de ranking?
 :::
 
-Por ejemplo, ¿qué te parecen estas preguntas que nosotros proponemos?
+**Preguntas (EDA en tenis)
 
-¿Qué día del año se producen más depósitos por parte de los estudiantes?
+Por ejemplo, estas preguntas son típicas en deporte:
+
+¿En qué superficie hay mayor proporción de upsets (gana la jugadora con peor ranking)?
 
 ```{r}
-#| label: pregunta1
+#| label: pregunta_tenis_1
 #| include: true
 #| warning: false
 #| echo: true
 #| code-fold: true
 #| code-summary: "Click para ver el código"
-#| 
+
+tennis.train %>%
+group_by(surface) %>%
+summarise(
+n = n(),
+upset_rate = mean(winner_is_better_rank == 0),
+.groups = "drop"
+) %>%
+arrange(desc(upset_rate))
+
 bank.train %>% 
   filter(deposit=="yes") %>% 
   count(month, day) %>% 
   top_n(1,n)
 ```
 
-¿En qué mes del año realizan más depósitos los estudiantes?
-
+¿Cómo es la distribución de la **diferencia de ranking** (`rank_diff`) en partidos con y sin upset?
 ```{r}
-#| label: pregunta2
+#| label: pregunta_tenis_2
 #| include: true
 #| warning: false
 #| echo: true
 #| code-fold: true
 #| code-summary: "Click para ver el código"
-#| 
+
+ggplot(tennis.train, aes(x = rank_diff, colour = factor(winner_is_better_rank))) +
+geom_density(lwd = 1) +
+xlab("rank_diff = loser_rank - winner_rank") +
+labs(colour = "winner_better_rank") +
+ggtitle("Densidad de diferencia de ranking según si la ganadora estaba mejor rankeada")
+
 bank.train %>% 
   filter(deposit=="yes" & job=="student") %>% 
   count(month) %>% 
   top_n(1,n)
 ```
 
-¿Qué trabajo está asociado con el mayor porcentaje de depósitos?
+¿Cambia la probabilidad de upset con el **tamaño del cuadro** (`draw_size`)?
 
 ```{r}
-#| label: pregunta3
+#| label: pregunta_tenis_3
 #| include: true
 #| warning: false
 #| echo: true
 #| code-fold: true
 #| code-summary: "Click para ver el código"
-#| 
+
+tennis.train %>%
+group_by(draw_size) %>%
+summarise(
+n = n(),
+upset_rate = mean(winner_is_better_rank == 0),
+.groups = "drop"
+) %>%
+arrange(desc(n)) %>%
+slice_head(n = 10)
+
+ 
 bank.train %>%
   group_by(job) %>%
   mutate(d = n()) %>%
@@ -272,63 +335,76 @@ bank.train %>%
 
 ## Variable objetivo
 
-En problemas de clasificación (Aprendizaje Supervisado, ver apartado @sec-metodosML) existe una variable de interés fundamental, es la variable respuesta o variable objetivo. En el caso que nos ocupa dicha variable es la característica: "deposit". Vamos a estudiar la información que nos proporciona dicha variable.
+En problemas de clasificación (Aprendizaje Supervisado, ver apartado @sec-metodosML) existe una variable de interés fundamental, es la variable respuesta o variable objetivo. 
+En este ejemplo la variable objetivo es `winner_is_better_rank`:
+
+- 1: gana la jugadora con mejor ranking (resultado “esperable”)
+
+- 0: gana la jugadora con peor ranking (*upset*)
+
+Vamos a estudiar la información que nos proporciona dicha variable.
 
 ```{r}
-#| label: variable_objetivo
+#| label: variable_objetivo_tenis
 #| include: true
 #| warning: false
 #| echo: true
 
-library(ggplot2)
-table(bank.train$deposit)
-ggplot(data=bank.train,aes(x=deposit,fill=deposit)) +
-  geom_bar(aes(y=(..count..)/sum(..count..))) +
-  scale_y_continuous(labels=scales::percent) +
-  theme(legend.position="none") +
-  ylab("Frecuencia relativa") +
-  xlab("Variable respuesta: deposit")
+table(tennis.train$winner_is_better_rank)
+
+ggplot(tennis.train, aes(x = factor(winner_is_better_rank), fill = factor(winner_is_better_rank))) +
+geom_bar(aes(y = (..count..)/sum(..count..))) +
+scale_y_continuous(labels = scales::percent) +
+theme(legend.position = "none") +
+ylab("Frecuencia relativa") +
+xlab("Variable respuesta: winner_is_better_rank (1=mejor ranking gana)")
 ```
 
 ## Visualizar distribuciones
 
-La forma de visualizar la distribución de una variable dependerá de si la variable es categórica o continua. Una variable es categórica si sólo puede tomar uno de un pequeño conjunto de valores. En R, las variables categóricas suelen guardarse como factores o vectores de caracteres. Para examinar la distribución de una variable categórica, utiliza un gráfico de barras:
+La forma de visualizar la distribución de una variable dependerá de si la variable es categórica o continua. Una variable es categórica si sólo puede tomar uno de un pequeño conjunto de valores. En R, las variables categóricas suelen guardarse como factores o vectores de caracteres. Para examinar la distribución de una variable categórica, utiliza un gráfico de barras. 
+
+**Variable categórica: superficie**
 
 ```{r}
+#| label: distrib_surface
 #| include: true
 #| warning: false
 #| echo: true
 
-ggplot(data = bank.train) +
-  geom_bar(mapping = aes(x = contact))
-  
+ggplot(tennis.train) +
+geom_bar(aes(x = surface))
+
+
 ```
 
 Puedes obtener los valores exactos en cada categoría como sigue:
 
 ```{r}
+#| label: tabla_surface
 #| include: true
 #| warning: false
 #| echo: true
 
-bank.train%>% 
-  count(contact)
+tennis.train %>% count(surface)
   
 ```
 
-Una variable es continua si puede tomar cualquiera de un conjunto infinito de valores ordenados. Para examinar la distribución de una variable continua, utiliza un histograma:
+Una variable es continua si puede tomar cualquiera de un conjunto infinito de valores ordenados. Para examinar la distribución de una variable continua, utiliza un histogram.
+
+**Variable continua: diferencia de edad**
 
 ```{r}
+#| label: hist_age_diff
 #| include: true
 #| warning: false
 #| echo: true
 
-ggplot(data = bank.train) +
-  geom_histogram(mapping = aes(x = age), binwidth = 5)
-  
+ggplot(tennis.train) +
+geom_histogram(aes(x = age_diff), binwidth = 1)
 ```
 
-Un histograma divide el eje $x$ en intervalos equidistantes y, a continuación, utiliza la altura de una barra para mostrar el número de observaciones que se encuentran en cada intervalo. En el gráfico anterior, la primera barra muestra unas 100 observaciones (realmente son 119) tienen un valor de edad por debajo de 22.5 años. Puede establecer la anchura de los intervalos en un histograma con el argumento binwidth, que se mide en las unidades de la variable $x$.
+Un histograma divide el eje $x$ en intervalos equidistantes y, a continuación, utiliza la altura de una barra para mostrar el número de observaciones que se encuentran en cada intervalo. Puede establecer la anchura de los intervalos en un histograma con el argumento binwidth, que se mide en las unidades de la variable $x$.
 
 ::: {.callout-important title="Para recordar"}
 Siempre se deben explorar una variedad de anchos de intervalo cuando trabajamos con histogramas, ya que diferentes anchos de intervalo pueden revelar diferentes patrones.
@@ -337,12 +413,15 @@ Siempre se deben explorar una variedad de anchos de intervalo cuando trabajamos 
 Podemos representar funciones de densidad de probabilidad.
 
 ```{r}
+#| label: dens_age_diff
 #| include: true
 #| warning: false
 #| echo: true
-ggplot(bank.train, aes(x = age)) +
+
+ggplot(tennis.train, aes(x = age_diff)) +
 geom_density() +
-ggtitle('KDE de edad en datos bank')
+ggtitle("KDE de la diferencia de edad (winner_age - loser_age)")
+
 ```
 
 Otro gráfico muy utilizado para variables cuantitativas univariantes es el *boxplot*, también llamado *box-and-whisker plot* (diagrama de caja y bigotes). Es especialmente útil para detectar posibles datos atípicos en los valores de una variable, siempre que su distribución sea parecida a una distribución *Normal*. El gráfico muestra:
@@ -358,12 +437,17 @@ Otro gráfico muy utilizado para variables cuantitativas univariantes es el *box
 En distribuciones muy asimétricas o con muchos valores extremos, muy diferentes a una distribución *Normal*, aparecerán demasiados puntos más allá de los bigotes y no se podrán apreciar fácilmente los atípicos (demasiados puntos considerados como tales). En ese caso, es conveniente intentar una transformación de la variable antes de representar el *boxplot*.
 
 ```{r}
+#| label: box_rank_diff
 #| include: true
 #| warning: false
 #| echo: true
-#| 
-ggplot(bank.train, aes(x=deposit, y=age, color=deposit)) +
-  geom_boxplot()
+
+ggplot(tennis.train, aes(x = factor(winner_is_better_rank), y = age_diff, colour = factor(winner_is_better_rank))) +
+geom_boxplot() +
+theme(legend.position = "none") +
+xlab("winner_is_better_rank") +
+ylab("Age_diff")
+
 
 ```
 
@@ -371,15 +455,21 @@ ggplot(bank.train, aes(x=deposit, y=age, color=deposit)) +
 
 ### Transformación de variables cuantitativas
 
-En algunos métodos de ML es necesario contar con variables que cumplan requisitos de normalidad. Por ejemplo, si tomamos la transformación $log$ sobre la variable `edad` obtenemos una distribución multimodal que, probablemente, corresponda a la combinación de dos (o más) normales.
+En algunos métodos de ML es necesario contar con variables que cumplan requisitos de normalidad. En deporte es frecuente que diferencias como `rank_diff` tengan colas largas (valores extremos). Una transformación logarítmica puede estabilizar escalas, pero requiere positividad. 
 
 ```{r}
+#| label: transform_rankdiff
 #| include: true
 #| warning: false
 #| echo: true
 
-ggplot(data = bank.train) +
-  geom_histogram(mapping = aes(x = log(age)), binwidth = .1)
+tennis.train <- tennis.train %>%
+mutate(log_rank_diff = log(rank_diff))
+
+ggplot(tennis.train) +
+geom_histogram(aes(x = log_rank_diff), binwidth = 0.25) +
+xlab("log(rank_diff)")
+
 ```
 
 ::: {.callout-important title="Para recordar"}
@@ -419,7 +509,7 @@ La función `car::symbox(...)` permite probar varias combinaciones típicas del 
 
 library(car)
 
-bank.train %>% symbox(~ age, data = .)
+tennis.train %>% symbox(~ winner_age, data = .)
 ```
 
 #### Transformaciones para igualar dispersión

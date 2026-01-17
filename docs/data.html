@@ -1036,16 +1036,16 @@ Fuentes de datos
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>datos</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   x  y char
-1  1  1    C
-2  1  2    C
-3  1  3    C
+1  1  1    A
+2  1  2    B
+3  1  3    A
 4  1  4    C
 5  1  5    C
-6  1  6    A
-7  1  7    B
-8  1  8    A
+6  1  6    B
+7  1  7    A
+8  1  8    C
 9  1  9    C
-10 1 10    B</code></pre>
+10 1 10    C</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is.data.frame</span>(datos)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1803,7 +1803,7 @@ Documentación
 <li><p><strong>Transparencia</strong>: Debe existir claridad sobre cómo se obtienen y utilizan los datos, así como sobre los métodos de análisis.</p></li>
 <li><p><strong>Consentimiento</strong>: Es fundamental obtener el consentimiento informado de las personas cuyos datos se recopilan, especialmente en el contexto de datos personales.</p></li>
 <li><p><strong>Equidad</strong>: Los análisis deben ser imparciales y justos, evitando la discriminación y el sesgo en los resultados.</p></li>
-<li><p><strong>Responsabilidad</strong>: Los profesionales de datos deben asumir la responsabilidad de los posibles impactos de sus decisiones y comunicar sus hallazgos de manera precisa y ética.</p></li>
+<li><p><strong>Responsabilidad</strong>: Los profesionales de datos deben asumir la responsabilidad de los posibles impactos de sus decisiones y comunicar sus hallazgos de manera precisa y ética. En el deporte, los resultados de los modelos pueden influir directamente en decisiones con impacto personal y profesional (selección de jugadores, minutos de juego, contratos, retorno tras lesión). Es éticamente necesario evitar el uso acrítico de modelos automáticos y garantizar que los resultados se interpreten como apoyo a la decisión, no como sustitutos del criterio técnico y humano.</p></li>
 </ul>
 </div>
 </div>
@@ -1825,6 +1825,8 @@ Privacidad
 <li><p><strong>Anonimización</strong>: La eliminación o la codificación de información identificable en los datos es esencial para proteger la privacidad.</p></li>
 <li><p><strong>Seguridad de los datos</strong>: Los datos deben ser almacenados y transmitidos de manera segura para evitar la exposición no autorizada.</p></li>
 <li><p><strong>Cumplimiento normativo</strong>: Es necesario cumplir con leyes y regulaciones de privacidad, como el Reglamento General de Protección de Datos (RGPD) en la Unión Europea.</p></li>
+<li><p><strong>Datos biométricos y de salud</strong>: En el ámbito deportivo se manejan con frecuencia datos especialmente sensibles (frecuencia cardíaca, carga fisiológica, historial de lesiones). Estos datos requieren un nivel de protección reforzado y un consentimiento explícito, dado su impacto potencial en la salud y la empleabilidad del deportista.</p></li>
+<li><p><strong>Reutilización y cesión de datos</strong>: Es habitual que los datos deportivos se reutilicen con fines distintos a los inicialmente previstos (investigación, scouting, difusión pública). Debe garantizarse que cualquier uso secundario sea compatible con el consentimiento original y con la normativa vigente.</p></li>
 </ul>
 </div>
 </div>
@@ -1847,10 +1849,13 @@ Seguridad
 <li><p><strong>Cifrado</strong>: Utilizar técnicas de cifrado para proteger los datos tanto en reposo como en tránsito.</p></li>
 <li><p><strong>Monitoreo y detección de amenazas</strong>: Implementar sistemas de monitoreo y detección de amenazas para identificar y responder a posibles ataques o violaciones de seguridad.</p></li>
 <li><p><strong>Respaldo de datos</strong>: Realizar copias de seguridad regulares para evitar la pérdida de datos en caso de incidentes de seguridad.</p></li>
+<li><p><strong>Protección frente a usos competitivos indebidos</strong>: En contextos deportivos profesionales, una brecha de seguridad no solo implica pérdida de privacidad, sino también desventajas competitivas (filtración de datos de entrenamiento, tácticas o estado físico). La seguridad de los datos debe considerarse también desde una perspectiva estratégica y competitiva.</p></li>
 </ul>
 </div>
 </div>
 </div>
+<p>En el análisis de datos deportivos, las decisiones técnicas nunca son neutras: afectan a personas, a su salud, a su carrera profesional y a la equidad de la competición.</p>
+<hr>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
