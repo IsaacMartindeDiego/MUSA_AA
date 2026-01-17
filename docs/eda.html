@@ -524,32 +524,6 @@ Para recordar
 #   loser_ioc &lt;chr&gt;, loser_age &lt;dbl&gt;, score &lt;chr&gt;, best_of &lt;dbl&gt;, round &lt;chr&gt;,
 #   minutes &lt;dbl&gt;, w_ace &lt;dbl&gt;, w_df &lt;dbl&gt;, w_svpt &lt;dbl&gt;, w_1stIn &lt;dbl&gt;, …</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>bank <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">'https://raw.githubusercontent.com/rafiag/DTI2020/main/data/bank.csv'</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(bank)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 11162    17</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>bank<span class="ot">=</span><span class="fu">as.tibble</span>(bank)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>bank</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 11,162 × 17
-     age job       marital education default balance housing loan  contact   day
-   &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;int&gt;
- 1    59 admin.    married secondary no         2343 yes     no    unknown     5
- 2    56 admin.    married secondary no           45 no      no    unknown     5
- 3    41 technici… married secondary no         1270 yes     no    unknown     5
- 4    55 services  married secondary no         2476 yes     no    unknown     5
- 5    54 admin.    married tertiary  no          184 no      no    unknown     5
- 6    42 manageme… single  tertiary  no            0 yes     yes   unknown     5
- 7    56 manageme… married tertiary  no          830 yes     yes   unknown     6
- 8    60 retired   divorc… secondary no          545 yes     no    unknown     6
- 9    37 technici… married secondary no            1 yes     no    unknown     6
-10    28 services  single  secondary no         5090 yes     no    unknown     6
-# ℹ 11,152 more rows
-# ℹ 7 more variables: month &lt;chr&gt;, duration &lt;int&gt;, campaign &lt;int&gt;, pdays &lt;int&gt;,
-#   previous &lt;int&gt;, poutcome &lt;chr&gt;, deposit &lt;chr&gt;</code></pre>
-</div>
 </div>
 <p>Disponemos de un conjunto de datos con <strong>un partido por fila</strong> y múltiples variables asociadas al torneo y a las jugadoras (ranking, edad, etc.).</p>
 </section>
@@ -557,7 +531,7 @@ Para recordar
 <h2 data-number="3.7" class="anchored" data-anchor-id="tipo-de-variables"><span class="header-section-number">3.7</span> Tipo de variables</h2>
 <p>Para averiguar qué tipo de variables manejamos, ejecutar:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(tennis)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(tennis)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>tibble [2,810 × 49] (S3: tbl_df/tbl/data.frame)
  $ tourney_id        : chr [1:2810] "2023-9900" "2023-9900" "2023-9900" "2023-9900" ...
@@ -621,24 +595,25 @@ Para recordar
 </ul>
 <p>Creamos el dataset de trabajo y eliminamos observaciones con faltantes en las variables seleccionadas.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tennis_ml <span class="ot">&lt;-</span> tennis <span class="sc">%&gt;%</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(surface, draw_size, winner_rank, loser_rank, winner_age, loser_age) <span class="sc">%&gt;%</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">drop_na</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="at">winner_is_better_rank =</span> <span class="fu">as.integer</span>(winner_rank <span class="sc">&lt;</span> loser_rank),</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="at">rank_diff =</span> loser_rank <span class="sc">-</span> winner_rank,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="at">age_diff =</span> winner_age <span class="sc">-</span> loser_age</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tennis_ml)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>tennis_ml <span class="ot">&lt;-</span> tennis <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(surface, draw_size, winner_rank, loser_rank, winner_age, loser_age) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">drop_na</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="at">winner_is_better_rank =</span> <span class="fu">as.factor</span>(winner_rank <span class="sc">&lt;</span> loser_rank),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="at">rank_diff =</span> loser_rank <span class="sc">-</span> winner_rank,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="at">age_diff =</span> winner_age <span class="sc">-</span> loser_age,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="at">surface=</span><span class="fu">as.factor</span>(surface)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tennis_ml)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2741    9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tennis_ml</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>tennis_ml</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2,741 × 9
    surface draw_size winner_rank loser_rank winner_age loser_age
-   &lt;chr&gt;       &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+   &lt;fct&gt;       &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
  1 Hard           18           3         27       28.8      29.1
  2 Hard           18          11         54       27.8      24  
  3 Hard           18           3          1       28.8      21.5
@@ -650,51 +625,40 @@ Para recordar
  9 Hard           18           1         27       21.5      29.1
 10 Hard           18          48         54       30.8      24  
 # ℹ 2,731 more rows
-# ℹ 3 more variables: winner_is_better_rank &lt;int&gt;, rank_diff &lt;dbl&gt;,
+# ℹ 3 more variables: winner_is_better_rank &lt;fct&gt;, rank_diff &lt;dbl&gt;,
 #   age_diff &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p><strong>Particiones de datos (train/test/valid)</strong></p>
 <p>Como en este ejemplo no estamos modelando tiempo, podemos particionar aleatoriamente. Usaremos 50% entrenamiento, 25% test y 25% validación.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2138</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(tennis_ml)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>indices <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(n)</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>indices.train <span class="ot">&lt;-</span> <span class="fu">sample</span>(indices, <span class="at">size =</span> <span class="fu">floor</span>(n <span class="sc">*</span> <span class="fl">0.5</span>), <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>resto <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(indices, indices.train)</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>indices.test <span class="ot">&lt;-</span> <span class="fu">sample</span>(resto, <span class="at">size =</span> <span class="fu">floor</span>(n <span class="sc">*</span> <span class="fl">0.25</span>), <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>indices.valid <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(resto, indices.test)</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="ot">&lt;-</span> tennis_ml[indices.train, ]</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>tennis.test  <span class="ot">&lt;-</span> tennis_ml[indices.test, ]</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>tennis.valid <span class="ot">&lt;-</span> tennis_ml[indices.valid, ]</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tennis.train)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2138</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(tennis_ml)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>indices <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(n)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>indices.train <span class="ot">&lt;-</span> <span class="fu">sample</span>(indices, <span class="at">size =</span> <span class="fu">floor</span>(n <span class="sc">*</span> <span class="fl">0.5</span>), <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>resto <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(indices, indices.train)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>indices.test <span class="ot">&lt;-</span> <span class="fu">sample</span>(resto, <span class="at">size =</span> <span class="fu">floor</span>(n <span class="sc">*</span> <span class="fl">0.25</span>), <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>indices.valid <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(resto, indices.test)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="ot">&lt;-</span> tennis_ml[indices.train, ]</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>tennis.test  <span class="ot">&lt;-</span> tennis_ml[indices.test, ]</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>tennis.valid <span class="ot">&lt;-</span> tennis_ml[indices.valid, ]</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tennis.train)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1370    9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tennis.test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tennis.test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 685   9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tennis.valid)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tennis.valid)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 686   9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parciticionamos los datos</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2138</span>)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span><span class="fu">dim</span>(bank)[<span class="dv">1</span>]</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>indices<span class="ot">=</span><span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span>n)</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>indices.train<span class="ot">=</span><span class="fu">sample</span>(indices,<span class="at">size=</span>n<span class="sc">*</span>.<span class="dv">5</span>,<span class="at">replace=</span><span class="cn">FALSE</span>)</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>indices.test<span class="ot">=</span><span class="fu">sample</span>(indices[<span class="sc">-</span>indices.train],<span class="at">size=</span>n<span class="sc">*</span>.<span class="dv">25</span>,<span class="at">replace=</span><span class="cn">FALSE</span>)</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>indices.valid<span class="ot">=</span>indices[<span class="sc">-</span><span class="fu">c</span>(indices.train,indices.test)]</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>bank.train<span class="ot">=</span>bank[indices.train,]</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>bank.test<span class="ot">=</span>bank[indices.test,]</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>bank.valid<span class="ot">=</span>bank[indices.valid,]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled" title="Atrévete">
 <div class="callout-header d-flex align-content-center">
@@ -716,46 +680,33 @@ Atrévete
 <div class="cell">
 <details class="code-fold">
 <summary>Click para ver el código</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="sc">%&gt;%</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(surface) <span class="sc">%&gt;%</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="at">n =</span> <span class="fu">n</span>(),</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="at">upset_rate =</span> <span class="fu">mean</span>(winner_is_better_rank <span class="sc">==</span> <span class="dv">0</span>),</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(<span class="fu">desc</span>(upset_rate))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(surface) <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="at">upset_rate =</span> <span class="fu">mean</span>(winner_is_better_rank <span class="sc">==</span> <span class="dv">0</span>),</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(<span class="fu">desc</span>(upset_rate))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 3
   surface     n upset_rate
-  &lt;chr&gt;   &lt;int&gt;      &lt;dbl&gt;
-1 Grass     154      0.377
-2 Hard      840      0.370
-3 Clay      376      0.348</code></pre>
-</div>
-<details class="code-fold">
-<summary>Click para ver el código</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>bank.train <span class="sc">%&gt;%</span> </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(deposit<span class="sc">==</span><span class="st">"yes"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(month, day) <span class="sc">%&gt;%</span> </span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">1</span>,n)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 3
-  month   day     n
-  &lt;chr&gt; &lt;int&gt; &lt;int&gt;
-1 apr      30    79</code></pre>
+  &lt;fct&gt;   &lt;int&gt;      &lt;dbl&gt;
+1 Clay      376          0
+2 Grass     154          0
+3 Hard      840          0</code></pre>
 </div>
 </div>
 <p>¿Cómo es la distribución de la <strong>diferencia de ranking</strong> (<code>rank_diff</code>) en partidos con y sin upset?</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Click para ver el código</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train, <span class="fu">aes</span>(<span class="at">x =</span> rank_diff, <span class="at">colour =</span> <span class="fu">factor</span>(winner_is_better_rank))) <span class="sc">+</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_density</span>(<span class="at">lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">xlab</span>(<span class="st">"rank_diff = loser_rank - winner_rank"</span>) <span class="sc">+</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">"winner_better_rank"</span>) <span class="sc">+</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggtitle</span>(<span class="st">"Densidad de diferencia de ranking según si la ganadora estaba mejor rankeada"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train, <span class="fu">aes</span>(<span class="at">x =</span> rank_diff, <span class="at">colour =</span> <span class="fu">factor</span>(winner_is_better_rank))) <span class="sc">+</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_density</span>(<span class="at">lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">xlab</span>(<span class="st">"rank_diff = loser_rank - winner_rank"</span>) <span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">"winner_better_rank"</span>) <span class="sc">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggtitle</span>(<span class="st">"Densidad de diferencia de ranking según si la ganadora estaba mejor rankeada"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -764,68 +715,35 @@ Atrévete
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Click para ver el código</summary>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>bank.train <span class="sc">%&gt;%</span> </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(deposit<span class="sc">==</span><span class="st">"yes"</span> <span class="sc">&amp;</span> job<span class="sc">==</span><span class="st">"student"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(month) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">1</span>,n)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 2
-  month     n
-  &lt;chr&gt; &lt;int&gt;
-1 apr      21</code></pre>
-</div>
 </div>
 <p>¿Cambia la probabilidad de upset con el <strong>tamaño del cuadro</strong> (<code>draw_size</code>)?</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Click para ver el código</summary>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="sc">%&gt;%</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(draw_size) <span class="sc">%&gt;%</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="at">n =</span> <span class="fu">n</span>(),</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="at">upset_rate =</span> <span class="fu">mean</span>(winner_is_better_rank <span class="sc">==</span> <span class="dv">0</span>),</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(<span class="fu">desc</span>(n)) <span class="sc">%&gt;%</span></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(draw_size) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="at">upset_rate =</span> <span class="fu">mean</span>(winner_is_better_rank <span class="sc">==</span> <span class="dv">0</span>),</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(<span class="fu">desc</span>(n)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 3
    draw_size     n upset_rate
        &lt;dbl&gt; &lt;int&gt;      &lt;dbl&gt;
- 1        32   603      0.406
- 2       128   252      0.321
- 3        96   192      0.344
- 4        64   163      0.374
- 5         2    67      0.313
- 6        12    28      0.429
- 7        18    26      0.115
- 8        16    19      0.263
- 9         4    15      0.267
-10         8     5      0.4  </code></pre>
-</div>
-<details class="code-fold">
-<summary>Click para ver el código</summary>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>bank.train <span class="sc">%&gt;%</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(job) <span class="sc">%&gt;%</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">d =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(job, deposit) <span class="sc">%&gt;%</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Perc =</span> <span class="fu">n</span>()<span class="sc">/</span><span class="fu">first</span>(d), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">id_cols =</span> job,</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> deposit,</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> Perc</span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 3
-  job        no   yes
-  &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;
-1 student 0.218 0.782</code></pre>
+ 1        32   603          0
+ 2       128   252          0
+ 3        96   192          0
+ 4        64   163          0
+ 5         2    67          0
+ 6        12    28          0
+ 7        18    26          0
+ 8        16    19          0
+ 9         4    15          0
+10         8     5          0</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled" title="Repaso">
@@ -852,18 +770,18 @@ Repaso
 </ul>
 <p>Vamos a estudiar la información que nos proporciona dicha variable.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(tennis.train<span class="sc">$</span>winner_is_better_rank)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(tennis.train<span class="sc">$</span>winner_is_better_rank)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-  0   1 
-500 870 </code></pre>
+FALSE  TRUE 
+  500   870 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(winner_is_better_rank), <span class="at">fill =</span> <span class="fu">factor</span>(winner_is_better_rank))) <span class="sc">+</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">y =</span> (..count..)<span class="sc">/</span><span class="fu">sum</span>(..count..))) <span class="sc">+</span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ylab</span>(<span class="st">"Frecuencia relativa"</span>) <span class="sc">+</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">xlab</span>(<span class="st">"Variable respuesta: winner_is_better_rank (1=mejor ranking gana)"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(winner_is_better_rank), <span class="at">fill =</span> <span class="fu">factor</span>(winner_is_better_rank))) <span class="sc">+</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">y =</span> (..count..)<span class="sc">/</span><span class="fu">sum</span>(..count..))) <span class="sc">+</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ylab</span>(<span class="st">"Frecuencia relativa"</span>) <span class="sc">+</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="fu">xlab</span>(<span class="st">"Variable respuesta: winner_is_better_rank (1=mejor ranking gana)"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -878,8 +796,8 @@ Repaso
 <p>La forma de visualizar la distribución de una variable dependerá de si la variable es categórica o continua. Una variable es categórica si sólo puede tomar uno de un pequeño conjunto de valores. En R, las variables categóricas suelen guardarse como factores o vectores de caracteres. Para examinar la distribución de una variable categórica, utiliza un gráfico de barras.</p>
 <p><strong>Variable categórica: superficie</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train) <span class="sc">+</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> surface))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train) <span class="sc">+</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> surface))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -890,11 +808,11 @@ Repaso
 </div>
 <p>Puedes obtener los valores exactos en cada categoría como sigue:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="sc">%&gt;%</span> <span class="fu">count</span>(surface)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="sc">%&gt;%</span> <span class="fu">count</span>(surface)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 2
   surface     n
-  &lt;chr&gt;   &lt;int&gt;
+  &lt;fct&gt;   &lt;int&gt;
 1 Clay      376
 2 Grass     154
 3 Hard      840</code></pre>
@@ -903,8 +821,8 @@ Repaso
 <p>Una variable es continua si puede tomar cualquiera de un conjunto infinito de valores ordenados. Para examinar la distribución de una variable continua, utiliza un histogram.</p>
 <p><strong>Variable continua: diferencia de edad</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train) <span class="sc">+</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x =</span> age_diff), <span class="at">binwidth =</span> <span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train) <span class="sc">+</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x =</span> age_diff), <span class="at">binwidth =</span> <span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -929,9 +847,9 @@ Para recordar
 </div>
 <p>Podemos representar funciones de densidad de probabilidad.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train, <span class="fu">aes</span>(<span class="at">x =</span> age_diff)) <span class="sc">+</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_density</span>() <span class="sc">+</span></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggtitle</span>(<span class="st">"KDE de la diferencia de edad (winner_age - loser_age)"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train, <span class="fu">aes</span>(<span class="at">x =</span> age_diff)) <span class="sc">+</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_density</span>() <span class="sc">+</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggtitle</span>(<span class="st">"KDE de la diferencia de edad (winner_age - loser_age)"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -949,11 +867,11 @@ Para recordar
 </ul>
 <p>En distribuciones muy asimétricas o con muchos valores extremos, muy diferentes a una distribución <em>Normal</em>, aparecerán demasiados puntos más allá de los bigotes y no se podrán apreciar fácilmente los atípicos (demasiados puntos considerados como tales). En ese caso, es conveniente intentar una transformación de la variable antes de representar el <em>boxplot</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(winner_is_better_rank), <span class="at">y =</span> age_diff, <span class="at">colour =</span> <span class="fu">factor</span>(winner_is_better_rank))) <span class="sc">+</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">xlab</span>(<span class="st">"winner_is_better_rank"</span>) <span class="sc">+</span></span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ylab</span>(<span class="st">"Age_diff"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(winner_is_better_rank), <span class="at">y =</span> age_diff, <span class="at">colour =</span> <span class="fu">factor</span>(winner_is_better_rank))) <span class="sc">+</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="fu">xlab</span>(<span class="st">"winner_is_better_rank"</span>) <span class="sc">+</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ylab</span>(<span class="st">"Age_diff"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -969,12 +887,12 @@ Para recordar
 <h3 data-number="3.12.1" class="anchored"><span class="header-section-number">3.12.1</span> Transformación de variables cuantitativas</h3>
 <p>En algunos métodos de ML es necesario contar con variables que cumplan requisitos de normalidad. En deporte es frecuente que diferencias como <code>rank_diff</code> tengan colas largas (valores extremos). Una transformación logarítmica puede estabilizar escalas, pero requiere positividad.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="ot">&lt;-</span> tennis.train <span class="sc">%&gt;%</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">log_rank_diff =</span> <span class="fu">log</span>(rank_diff))</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train) <span class="sc">+</span></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x =</span> log_rank_diff), <span class="at">binwidth =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="fu">xlab</span>(<span class="st">"log(rank_diff)"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="ot">&lt;-</span> tennis.train <span class="sc">%&gt;%</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">log_rank_diff =</span> <span class="fu">log</span>(rank_diff))</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train) <span class="sc">+</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x =</span> log_rank_diff), <span class="at">binwidth =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="fu">xlab</span>(<span class="st">"log(rank_diff)"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1024,9 +942,9 @@ John Fox
 <p><span class="math display">\[x(\lambda)= \begin{cases} \frac{x^\lambda-1}{\lambda},&amp; \text{cuando } \lambda \neq 0,\\ log_e(x), &amp; \text{cuando } \lambda = 0 \end{cases}\]</span></p>
 <p>La función <code>car::symbox(...)</code> permite probar varias combinaciones típicas del parámetro λ , para comprobar con cuál de ellas obtenemos una distribución más simétrica de valores.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="sc">%&gt;%</span> <span class="fu">symbox</span>(<span class="sc">~</span> winner_age, <span class="at">data =</span> .)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="sc">%&gt;%</span> <span class="fu">symbox</span>(<span class="sc">~</span> winner_age, <span class="at">data =</span> .)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1107,9 +1025,9 @@ R
 </div>
 <p>En variables ordinales se debe respetar estrictamente el orden preestablecido de los niveles. Por ejemplo, una ordenación (“regular” &lt; “bueno” &lt; “malo”) es inaceptable. Para establecer una ordenación explícita entre los niveles hay que especificarla manualmente si no coincide con la alfabética, y además configurar el argumento ordered = TRUE en la función factor():</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>satisfaccion <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"malo"</span>, <span class="st">"bueno"</span>, <span class="st">"regular"</span>), <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>))</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>satisfaccion <span class="ot">&lt;-</span> <span class="fu">factor</span>(satisfaccion, <span class="at">ordered =</span> <span class="cn">TRUE</span>, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"malo"</span>, <span class="st">"regular"</span>, <span class="st">"bueno"</span>))</span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>satisfaccion</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>satisfaccion <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"malo"</span>, <span class="st">"bueno"</span>, <span class="st">"regular"</span>), <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>))</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>satisfaccion <span class="ot">&lt;-</span> <span class="fu">factor</span>(satisfaccion, <span class="at">ordered =</span> <span class="cn">TRUE</span>, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"malo"</span>, <span class="st">"regular"</span>, <span class="st">"bueno"</span>))</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>satisfaccion</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] malo    malo    malo    bueno   bueno   bueno   regular regular regular
 Levels: malo &lt; regular &lt; bueno</code></pre>
@@ -1117,15 +1035,15 @@ Levels: malo &lt; regular &lt; bueno</code></pre>
 </div>
 <p>Para comprobar qué nivel se toma como referencia en cada uno de los factores de una base de datos usamos la funión <code>levels()</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(bank.train<span class="sc">$</span>marital)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(tennis.train<span class="sc">$</span>surface)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>NULL</code></pre>
+<pre><code>[1] "Clay"  "Grass" "Hard" </code></pre>
 </div>
 </div>
-<p>Y esto, ¿es correcto? Veamos la distribución de las observaciones en las categorías de la variable <code>marital</code>:</p>
+<p>Y esto, ¿es correcto? Veamos la distribución de las observaciones en las categorías de la variable <code>surface</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bank.train) <span class="sc">+</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> marital))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> tennis.train) <span class="sc">+</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> surface))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1149,15 +1067,15 @@ Recomendación
 </div>
 <p>Por tanto, en este caso particular deberíamos modificar la categoría de referencia como sigue:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>reorder_marital <span class="ot">=</span> <span class="fu">factor</span>(bank.train<span class="sc">$</span>marital, <span class="at">levels=</span>(<span class="fu">c</span>(<span class="st">' married'</span>, <span class="st">' single'</span>, <span class="st">' divorced'</span>)))</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(reorder_marital)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>reorder_surface <span class="ot">=</span> <span class="fu">factor</span>(tennis.train<span class="sc">$</span>surface, <span class="at">levels=</span>(<span class="fu">c</span>(<span class="st">'Hard'</span>, <span class="st">'Grass'</span>, <span class="st">'Clay'</span>)))</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(reorder_surface)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] " married"  " single"   " divorced"</code></pre>
+<pre><code>[1] "Hard"  "Grass" "Clay" </code></pre>
 </div>
 </div>
-<p>Nótese que la nueva variable aquí creada, <code>reorder_marital</code>, no ha sido incluida (aún) en el tibble <code>bank</code>. Para ello:</p>
+<p>Nótese que la nueva variable aquí creada, <code>reorder_surface</code>, no ha sido incluida (aún) en el tibble <code>tennis</code>. Para ello:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>bank.train<span class="sc">$</span>marital <span class="ot">=</span> reorder_marital</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>tennis.train<span class="sc">$</span>surface <span class="ot">=</span> reorder_surface</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="conversión-de-variables-cuantitativas-a-variables-categóricas" class="level4" data-number="3.13.1.1">
 <h4 data-number="3.13.1.1" class="anchored" data-anchor-id="conversión-de-variables-cuantitativas-a-variables-categóricas"><span class="header-section-number">3.13.1.1</span> Conversión de variables cuantitativas a variables categóricas</h4>
@@ -1182,20 +1100,27 @@ Para recordar
 </div>
 </div>
 <p>Es importante tener en cuenta que la conversión de variables cuantitativas a categóricas debe realizarse de manera cuidadosa y considerar el impacto en el análisis. La elección de cómo categorizar los datos debe estar respaldada por una <strong>comprensión sólida del problema</strong> y los objetivos del estudio. Además, se debe documentar claramente el proceso de conversión para que otros puedan replicarlo y comprender las categorías resultantes.</p>
-<p>A modo de ejemplo, vamos a categorizar la varible <code>age</code> en la base de datos <code>bank</code>. Para ello elegimos (elegimos!!!) las siguientes agrupaciones en la variable edad: (0,40],(40,60],(60,100].</p>
+<p>A modo de ejemplo, vamos a categorizar la varible <code>winner_age</code> en la base de datos <code>tennis</code>. Para ello elegimos (elegimos!!!) las siguientes agrupaciones en la variable edad: (15,25],(25,30],(30,45].</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a> bank.train <span class="ot">&lt;-</span> <span class="fu">within</span>(bank.train, {   </span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  age.cat <span class="ot">&lt;-</span> <span class="cn">NA</span> <span class="co"># need to initialize variable</span></span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  age.cat[age <span class="sc">&lt;=</span> <span class="dv">40</span>] <span class="ot">&lt;-</span> <span class="st">"Low"</span></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  age.cat[age <span class="sc">&gt;</span> <span class="dv">40</span> <span class="sc">&amp;</span> age <span class="sc">&lt;=</span> <span class="dv">60</span>] <span class="ot">&lt;-</span> <span class="st">"Middle"</span></span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  age.cat[age <span class="sc">&gt;</span> <span class="dv">60</span>] <span class="ot">&lt;-</span> <span class="st">"High"</span></span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>   } )</span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>bank.train<span class="sc">$</span>age.cat <span class="ot">&lt;-</span> <span class="fu">factor</span>(bank.train<span class="sc">$</span>age.cat, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Low"</span>, <span class="st">"Middle"</span>, <span class="st">"High"</span>))</span>
-<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bank.train<span class="sc">$</span>age.cat)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="ot">&lt;-</span> <span class="fu">within</span>(tennis.train, {   </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  w_age.cat <span class="ot">&lt;-</span> <span class="cn">NA</span> <span class="co"># need to initialize variable</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  w_age.cat[winner_age <span class="sc">&lt;=</span> <span class="dv">25</span>] <span class="ot">&lt;-</span> <span class="st">"Low"</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  w_age.cat[winner_age <span class="sc">&gt;</span> <span class="dv">25</span> <span class="sc">&amp;</span> winner_age <span class="sc">&lt;=</span> <span class="dv">30</span>] <span class="ot">&lt;-</span> <span class="st">"Middle"</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  w_age.cat[winner_age <span class="sc">&gt;</span> <span class="dv">30</span>] <span class="ot">&lt;-</span> <span class="st">"High"</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>   } )</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>tennis.train <span class="ot">&lt;-</span> <span class="fu">within</span>(tennis.train, {   </span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>  l_age.cat <span class="ot">&lt;-</span> <span class="cn">NA</span> <span class="co"># need to initialize variable</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  l_age.cat[loser_age <span class="sc">&lt;=</span> <span class="dv">25</span>] <span class="ot">&lt;-</span> <span class="st">"Low"</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  l_age.cat[loser_age <span class="sc">&gt;</span> <span class="dv">25</span> <span class="sc">&amp;</span> loser_age <span class="sc">&lt;=</span> <span class="dv">30</span>] <span class="ot">&lt;-</span> <span class="st">"Middle"</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>  l_age.cat[loser_age <span class="sc">&gt;</span> <span class="dv">30</span>] <span class="ot">&lt;-</span> <span class="st">"High"</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>   } )</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>tennis.train<span class="sc">$</span>age.cat <span class="ot">&lt;-</span> <span class="fu">factor</span>(tennis.train<span class="sc">$</span>w_age.cat, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Low"</span>, <span class="st">"Middle"</span>, <span class="st">"High"</span>))</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tennis.train<span class="sc">$</span>w_age.cat)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   Low Middle   High 
-  3116   2151    314 </code></pre>
+<pre><code>   Length     Class      Mode 
+     1370 character character </code></pre>
 </div>
 </div>
 </section>
@@ -1322,23 +1247,23 @@ Coeficiente de Variación
 </div>
 <p>En R, podemos obtener algunos estadísticos resumen mediante la opción <code>summary</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bank.train<span class="sc">$</span>age)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tennis.train<span class="sc">$</span>age)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  18.00   32.00   39.00   41.24   49.00   95.00 </code></pre>
+<pre><code>Length  Class   Mode 
+     0   NULL   NULL </code></pre>
 </div>
 </div>
 <p>Curiosamente, R no tiene una función estándar incorporada para calcular la moda. Así que creamos una función de usuario para calcular la moda de un conjunto de datos en R. Esta función toma el vector como entrada y da el valor de la moda como salida.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the function.</span></span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>summary_moda <span class="ot">&lt;-</span> <span class="cf">function</span>(v) {</span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>   uniqv <span class="ot">&lt;-</span> <span class="fu">unique</span>(v)</span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>   uniqv[<span class="fu">which.max</span>(<span class="fu">tabulate</span>(<span class="fu">match</span>(v, uniqv)))]</span>
-<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary_moda</span>(bank.train<span class="sc">$</span>age)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the function.</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>summary_moda <span class="ot">&lt;-</span> <span class="cf">function</span>(v) {</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>   uniqv <span class="ot">&lt;-</span> <span class="fu">unique</span>(v)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>   uniqv[<span class="fu">which.max</span>(<span class="fu">tabulate</span>(<span class="fu">match</span>(v, uniqv)))]</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary_moda</span>(tennis.train<span class="sc">$</span>age)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 31</code></pre>
+<pre><code>NULL</code></pre>
 </div>
 </div>
 </section>
@@ -1515,10 +1440,10 @@ p_valor
 <p>¿Recuerdas lo que es un contraste de hipótesis? ¿Recuerdas lo que es un intervalo de confianza? ¿y un p_valor? ¡Posiblemente te venga bien dar un repaso a esos conceptos!</p>
 </div>
 </div>
-<p>Vamos a estudiar la relación existente entre la variable objetivo <code>deposit' y la variable</code>duration<code>de la base de datos</code>bank`.</p>
+<p>Vamos a estudiar la relación existente entre la variable objetivo <code>winner</code> y la variable <code>age_diff</code> .</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bank.train, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">log</span>(duration), <span class="at">colour =</span> deposit)) <span class="sc">+</span></span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">lwd=</span><span class="dv">2</span>, <span class="at">linetype=</span><span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tennis.train, <span class="fu">aes</span>(<span class="at">x =</span> age_diff, <span class="at">colour =</span> <span class="fu">as.factor</span>(winner_is_better_rank)))<span class="sc">+</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">lwd=</span><span class="dv">2</span>, <span class="at">linetype=</span><span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1527,29 +1452,28 @@ p_valor
 </div>
 </div>
 </div>
-<p>Puede observarse una relación. Valores altos de la variable <code>duración</code> parecen estar relacionados con observaciones con <code>deposit</code> igual a ‘yes’.</p>
+<p>Puede observarse una ligera relación. Valores altos de la variable <code>age_diff</code> parecen estar relacionados con observaciones con variable respuesta igual a ‘1’.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">=</span> bank.train <span class="sc">%&gt;%</span> </span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(duration,deposit)<span class="sc">%&gt;%</span></span>
-<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">log.duration=</span><span class="fu">log</span>(duration))</span>
-<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen para los casos de depósito</span></span>
-<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(deposit<span class="sc">==</span><span class="st">"yes"</span>) <span class="sc">%&gt;%</span> .<span class="sc">$</span>log.duration)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">=</span> tennis.train <span class="sc">%&gt;%</span> </span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(age_diff,winner_is_better_rank)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen para los casos de 1</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(winner_is_better_rank<span class="sc">==</span><span class="dv">0</span>) <span class="sc">%&gt;%</span> .<span class="sc">$</span>age_diff)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  2.079   5.497   6.073   6.046   6.593   8.087 </code></pre>
+                                                </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen para los casos de no depósito</span></span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(deposit<span class="sc">==</span><span class="st">"no"</span>) <span class="sc">%&gt;%</span> .<span class="sc">$</span>log.duration)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen para los casos de 0</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(winner_is_better_rank<span class="sc">==</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> .<span class="sc">$</span>age_diff)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 0.6931  4.5433  5.0999  5.0308  5.6276  7.5022 </code></pre>
+                                                </code></pre>
 </div>
 </div>
 <p>Gráficamente, podemos comparar los boxplots.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(deposit, log.duration)) <span class="sc">+</span></span>
-<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_boxplot</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="fu">as.factor</span>(winner_is_better_rank), age_diff)) <span class="sc">+</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_boxplot</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1560,19 +1484,19 @@ p_valor
 </div>
 <p>Podemos constrastar dicha hipótesis. Por ejemplo, podemos realizar un test de la T para igualdad de medias.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(log.duration <span class="sc">~</span> deposit, <span class="at">data =</span> df)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(age_diff <span class="sc">~</span> winner_is_better_rank, <span class="at">data =</span> df)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Welch Two Sample t-test
 
-data:  log.duration by deposit
-t = -45.828, df = 5464.5, p-value &lt; 2.2e-16
-alternative hypothesis: true difference in means between group no and group yes is not equal to 0
+data:  age_diff by winner_is_better_rank
+t = -2.9707, df = 1007.1, p-value = 0.003042
+alternative hypothesis: true difference in means between group FALSE and group TRUE is not equal to 0
 95 percent confidence interval:
- -1.0583835 -0.9715488
+ -1.6504294 -0.3373683
 sample estimates:
- mean in group no mean in group yes 
-         5.030821          6.045787 </code></pre>
+mean in group FALSE  mean in group TRUE 
+         -0.7416000           0.2522989 </code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
@@ -1590,8 +1514,11 @@ Ejercicio
 </div>
 <p>Es posible estudiar la relación entre dos variables categóricas de manera gráfica.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bank.train, <span class="fu">aes</span>(<span class="at">x =</span> housing, <span class="at">fill =</span> deposit)) <span class="sc">+</span></span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">=</span> tennis.train <span class="sc">%&gt;%</span> </span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(w_age.cat,l_age.cat)</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> df, <span class="fu">aes</span>(<span class="at">x =</span> w_age.cat, <span class="at">fill =</span> l_age.cat)) <span class="sc">+</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1602,28 +1529,26 @@ Ejercicio
 </div>
 <p>Parece haber una relación, estando asociados las observaciones de personas con casa propia a un mayor porcentaje de `no’ en la variable respuesta. Podemos obtener la tabla de contingencia:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>data1<span class="ot">=</span><span class="fu">table</span>(bank.train<span class="sc">$</span>housing, bank.train<span class="sc">$</span>deposit)</span>
-<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(data1) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">housing =</span> <span class="fu">c</span>(<span class="st">"no"</span>, <span class="st">"yes"</span>),</span>
-<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">deposit =</span> <span class="fu">c</span>(<span class="st">"no"</span>, <span class="st">"yes"</span>))</span>
-<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>data1</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>data1<span class="ot">=</span><span class="fu">table</span>(df<span class="sc">$</span>w_age.cat, df<span class="sc">$</span>l_age.cat)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>data1</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>       deposit
-housing   no  yes
-    no  1246 1688
-    yes 1662  985</code></pre>
+<pre><code>        
+         High Low Middle
+  High     43  75    103
+  Low     103 205    227
+  Middle  101 255    258</code></pre>
 </div>
 </div>
 <p>Y el contraste correspondiente para la hipótesis nula de no existencia de relación.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(bank.train<span class="sc">$</span>housing, bank.train<span class="sc">$</span>deposit)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(df<span class="sc">$</span>w_age.cat,df<span class="sc">$</span>l_age.cat)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-    Pearson's Chi-squared test with Yates' continuity correction
+    Pearson's Chi-squared test
 
-data:  bank.train$housing and bank.train$deposit
-X-squared = 229.44, df = 1, p-value &lt; 2.2e-16</code></pre>
+data:  df$w_age.cat and df$l_age.cat
+X-squared = 4.9102, df = 4, p-value = 0.2966</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">

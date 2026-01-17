@@ -137,11 +137,6 @@ dim(tennis)
 tennis <- as_tibble(tennis)
 tennis
 
-library(tidyverse)
-bank = read.csv('https://raw.githubusercontent.com/rafiag/DTI2020/main/data/bank.csv')
-dim(bank)
-bank=as.tibble(bank)
-bank
 ```
 
 Disponemos de un conjunto de datos con **un partido por fila** y múltiples variables asociadas al torneo y a las jugadoras (ranking, edad, etc.).
@@ -183,9 +178,10 @@ tennis_ml <- tennis %>%
 select(surface, draw_size, winner_rank, loser_rank, winner_age, loser_age) %>%
 drop_na() %>%
 mutate(
-winner_is_better_rank = as.integer(winner_rank < loser_rank),
+winner_is_better_rank = as.factor(winner_rank < loser_rank),
 rank_diff = loser_rank - winner_rank,
-age_diff = winner_age - loser_age
+age_diff = winner_age - loser_age,
+surface=as.factor(surface)
 )
 
 dim(tennis_ml)
@@ -221,18 +217,6 @@ dim(tennis.train)
 dim(tennis.test)
 dim(tennis.valid)
 
-
-# Parciticionamos los datos
-set.seed(2138)
-n=dim(bank)[1]
-indices=seq(1:n)
-indices.train=sample(indices,size=n*.5,replace=FALSE)
-indices.test=sample(indices[-indices.train],size=n*.25,replace=FALSE)
-indices.valid=indices[-c(indices.train,indices.test)]
-
-bank.train=bank[indices.train,]
-bank.test=bank[indices.test,]
-bank.valid=bank[indices.valid,]
 ```
 
 ::: {.callout-caution title="Atrévete"}
@@ -265,10 +249,6 @@ upset_rate = mean(winner_is_better_rank == 0),
 ) %>%
 arrange(desc(upset_rate))
 
-bank.train %>% 
-  filter(deposit=="yes") %>% 
-  count(month, day) %>% 
-  top_n(1,n)
 ```
 
 ¿Cómo es la distribución de la **diferencia de ranking** (`rank_diff`) en partidos con y sin upset?
@@ -286,10 +266,6 @@ xlab("rank_diff = loser_rank - winner_rank") +
 labs(colour = "winner_better_rank") +
 ggtitle("Densidad de diferencia de ranking según si la ganadora estaba mejor rankeada")
 
-bank.train %>% 
-  filter(deposit=="yes" & job=="student") %>% 
-  count(month) %>% 
-  top_n(1,n)
 ```
 
 ¿Cambia la probabilidad de upset con el **tamaño del cuadro** (`draw_size`)?
@@ -311,19 +287,6 @@ upset_rate = mean(winner_is_better_rank == 0),
 ) %>%
 arrange(desc(n)) %>%
 slice_head(n = 10)
-
- 
-bank.train %>%
-  group_by(job) %>%
-  mutate(d = n()) %>%
-  group_by(job, deposit) %>%
-  summarise(Perc = n()/first(d), .groups = "drop") %>%
-  pivot_wider(
-    id_cols = job,
-    names_from = deposit,
-    values_from = Perc
-  ) %>%
-  top_n(1)
 
 ```
 
@@ -579,17 +542,19 @@ Para comprobar qué nivel se toma como referencia en cada uno de los factores de
 #| include: true
 #| warning: false
 #| echo: true
-levels(bank.train$marital)
+
+
+levels(tennis.train$surface)
 ```
 
-Y esto, ¿es correcto? Veamos la distribución de las observaciones en las categorías de la variable `marital`:
+Y esto, ¿es correcto? Veamos la distribución de las observaciones en las categorías de la variable `surface`:
 
 ```{r}
 #| include: true
 #| warning: false
 #| echo: true
-ggplot(data = bank.train) +
-  geom_bar(mapping = aes(x = marital))
+ggplot(data = tennis.train) +
+  geom_bar(mapping = aes(x = surface))
 ```
 
 ::: callout-warning
@@ -604,17 +569,17 @@ Por tanto, en este caso particular deberíamos modificar la categoría de refere
 #| include: true
 #| warning: false
 #| echo: true
-reorder_marital = factor(bank.train$marital, levels=(c(' married', ' single', ' divorced')))
-levels(reorder_marital)
+reorder_surface = factor(tennis.train$surface, levels=(c('Hard', 'Grass', 'Clay')))
+levels(reorder_surface)
 ```
 
-Nótese que la nueva variable aquí creada, `reorder_marital`, no ha sido incluida (aún) en el tibble `bank`. Para ello:
+Nótese que la nueva variable aquí creada, `reorder_surface`, no ha sido incluida (aún) en el tibble `tennis`. Para ello:
 
 ```{r}
 #| include: true
 #| warning: false
 #| echo: true
-bank.train$marital = reorder_marital
+tennis.train$surface = reorder_surface
 ```
 
 #### Conversión de variables cuantitativas a variables categóricas
@@ -637,21 +602,28 @@ El proceso de conversión de variables cuantitativas a categóricas generalmente
 
 Es importante tener en cuenta que la conversión de variables cuantitativas a categóricas debe realizarse de manera cuidadosa y considerar el impacto en el análisis. La elección de cómo categorizar los datos debe estar respaldada por una **comprensión sólida del problema** y los objetivos del estudio. Además, se debe documentar claramente el proceso de conversión para que otros puedan replicarlo y comprender las categorías resultantes.
 
-A modo de ejemplo, vamos a categorizar la varible `age` en la base de datos `bank`. Para ello elegimos (elegimos!!!) las siguientes agrupaciones en la variable edad: (0,40\],(40,60\],(60,100\].
+A modo de ejemplo, vamos a categorizar la varible `winner_age` en la base de datos `tennis`. Para ello elegimos (elegimos!!!) las siguientes agrupaciones en la variable edad: (15,25\],(25,30\],(30,45\].
 
 ```{r}
 #| include: true
 #| warning: false
 #| echo: true
- bank.train <- within(bank.train, {   
-  age.cat <- NA # need to initialize variable
-  age.cat[age <= 40] <- "Low"
-  age.cat[age > 40 & age <= 60] <- "Middle"
-  age.cat[age > 60] <- "High"
+tennis.train <- within(tennis.train, {   
+  w_age.cat <- NA # need to initialize variable
+  w_age.cat[winner_age <= 25] <- "Low"
+  w_age.cat[winner_age > 25 & winner_age <= 30] <- "Middle"
+  w_age.cat[winner_age > 30] <- "High"
    } )
 
-bank.train$age.cat <- factor(bank.train$age.cat, levels = c("Low", "Middle", "High"))
-summary(bank.train$age.cat)
+tennis.train <- within(tennis.train, {   
+  l_age.cat <- NA # need to initialize variable
+  l_age.cat[loser_age <= 25] <- "Low"
+  l_age.cat[loser_age > 25 & loser_age <= 30] <- "Middle"
+  l_age.cat[loser_age > 30] <- "High"
+   } )
+
+tennis.train$age.cat <- factor(tennis.train$w_age.cat, levels = c("Low", "Middle", "High"))
+summary(tennis.train$w_age.cat)
 
 ```
 
@@ -713,7 +685,7 @@ En R, podemos obtener algunos estadísticos resumen mediante la opción `summary
 #| include: true
 #| warning: false
 #| echo: true
-summary(bank.train$age)
+summary(tennis.train$age)
 ```
 
 Curiosamente, R no tiene una función estándar incorporada para calcular la moda. Así que creamos una función de usuario para calcular la moda de un conjunto de datos en R. Esta función toma el vector como entrada y da el valor de la moda como salida.
@@ -728,7 +700,7 @@ summary_moda <- function(v) {
    uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 
-summary_moda(bank.train$age)
+summary_moda(tennis.train$age)
 
 ```
 
@@ -820,32 +792,31 @@ Las pruebas estadísticas, como la prueba t de Student o la ANOVA, pueden utiliz
 ¿Recuerdas lo que es un contraste de hipótesis? ¿Recuerdas lo que es un intervalo de confianza? ¿y un p_valor? ¡Posiblemente te venga bien dar un repaso a esos conceptos!
 :::
 
-Vamos a estudiar la relación existente entre la variable objetivo `deposit' y la variable`duration`de la base de datos`bank\`.
+Vamos a estudiar la relación existente entre la variable objetivo `winner` y la variable `age_diff` .
 
 ```{r}
 #| include: true
 #| warning: false
 #| echo: true
-ggplot(bank.train, aes(x = log(duration), colour = deposit)) +
+ggplot(tennis.train, aes(x = age_diff, colour = as.factor(winner_is_better_rank)))+
   geom_density(lwd=2, linetype=1)
 
 ```
 
-Puede observarse una relación. Valores altos de la variable `duración` parecen estar relacionados con observaciones con `deposit` igual a 'yes'.
+Puede observarse una ligera relación. Valores altos de la variable `age_diff` parecen estar relacionados con observaciones con variable respuesta igual a '1'.
 
 ```{r}
 #| include: true
 #| warning: false
 #| echo: true
-df = bank.train %>% 
-      select(duration,deposit)%>%
-      mutate(log.duration=log(duration))
+df = tennis.train %>% 
+      select(age_diff,winner_is_better_rank)
 
-# Resumen para los casos de depósito
-summary(df %>% filter(deposit=="yes") %>% .$log.duration)
+# Resumen para los casos de 1
+summary(df %>% filter(winner_is_better_rank==0) %>% .$age_diff)
 
-# Resumen para los casos de no depósito
-summary(df %>% filter(deposit=="no") %>% .$log.duration)
+# Resumen para los casos de 0
+summary(df %>% filter(winner_is_better_rank==1) %>% .$age_diff)
 
 ```
 
@@ -855,7 +826,7 @@ Gráficamente, podemos comparar los boxplots.
 #| include: true
 #| warning: false
 #| echo: true
-ggplot(df, aes(deposit, log.duration)) +
+ggplot(df, aes(as.factor(winner_is_better_rank), age_diff)) +
         geom_boxplot()
 
 ```
@@ -866,7 +837,7 @@ Podemos constrastar dicha hipótesis. Por ejemplo, podemos realizar un test de l
 #| include: true
 #| warning: false
 #| echo: true
-t.test(log.duration ~ deposit, data = df)
+t.test(age_diff ~ winner_is_better_rank, data = df)
 ```
 
 ::: callout-caution
@@ -881,7 +852,11 @@ Es posible estudiar la relación entre dos variables categóricas de manera grá
 #| include: true
 #| warning: false
 #| echo: true
-ggplot(data = bank.train, aes(x = housing, fill = deposit)) +
+
+df = tennis.train %>% 
+      select(w_age.cat,l_age.cat)
+
+ggplot(data = df, aes(x = w_age.cat, fill = l_age.cat)) +
     geom_bar()
 ```
 
@@ -891,11 +866,8 @@ Parece haber una relación, estando asociados las observaciones de personas con 
 #| include: true
 #| warning: false
 #| echo: true
-data1=table(bank.train$housing, bank.train$deposit)
+data1=table(df$w_age.cat, df$l_age.cat)
 
-
-dimnames(data1) <- list(housing = c("no", "yes"),
-                        deposit = c("no", "yes"))
 data1
 ```
 
@@ -905,7 +877,7 @@ Y el contraste correspondiente para la hipótesis nula de no existencia de relac
 #| include: true
 #| warning: false
 #| echo: true
-chisq.test(bank.train$housing, bank.train$deposit)
+chisq.test(df$w_age.cat,df$l_age.cat)
 ```
 
 ::: callout-caution
