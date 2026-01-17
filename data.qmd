@@ -11,7 +11,6 @@ En el transcurso de este tema, exploraremos brevemente temas de importancia crí
 En primer lugar, tratamos los tipos de datos más comunes organizándose mediante dos clasificaciones distintas.
 
 ::: {.callout-note title="Atención"}
-
 Según su **estructura**, los datos pueden dividirse en datos estructurados y datos no estructurados.
 
 Según su comportamiento a lo largo del **tiempo**, los datos pueden calificarse como datos estáticos o datos dinámicos.
@@ -37,11 +36,32 @@ Los datos no estructurados, en cambio, carecen de un formato específico. Suelen
 
 ### Datos estáticos frente a datos dinámicos
 
-Esta organización atiende al comportamiento de los datos a lo largo del tiempo. Los datos estáticos son los datos que no cambian a lo largo del tiempo. Por el contrario, los datos pueden evolucionar en el tiempo, llegando nuevas observaciones, o nuevos valores de las variables de interés, que obliguen a los modelos construidos sobre ellos a realizar ajustes de manera constante. En estas situaciones hablaremos de datos dinámicos.
+Esta organización atiende al comportamiento de los datos a lo largo del tiempo, una distinción especialmente relevante en el análisis de datos deportivos. Los datos estáticos son aquellos cuyos valores no varían (o se asumen constantes) durante el período de análisis. En el contexto deportivo, ejemplos típicos de datos estáticos incluyen variables antropométricas de un deportista (altura, sexo, lateralidad), información contractual, posición habitual de juego, o características estructurales de una competición. Este tipo de datos suele utilizarse como información contextual o explicativa y, aunque puede actualizarse puntualmente, no presenta una dinámica temporal continua.
 
-Los datos dinámicos son los que presentan un nivel de complejidad más alto en términos de su tratamiento. Es habitual crear esquemas con el fin de simplificar las posibles operaciones que se llevarán a cabo con los datos dinámicos. Estos esquemas son aplicables principalmente a datos estructurados. Sin embargo, en el caso de los datos dinámicos no estructurados, la tarea radica en procesar estos datos de manera dinámica a medida que evolucionan, sin la capacidad de anticipar de antemano la estructura o dimensión que puedan adquirir.
+Por el contrario, los datos dinámicos son aquellos que evolucionan a lo largo del tiempo, ya sea mediante la incorporación de nuevas observaciones, la actualización de valores existentes o ambos procesos simultáneamente. En el deporte, este tipo de datos es predominante. Ejemplos claros son las series temporales de carga externa (distancia recorrida, aceleraciones, velocidad), medidas fisiológicas registradas durante entrenamientos o competiciones (frecuencia cardíaca, variabilidad cardíaca), datos de tracking espacio-temporal de jugadores y balón, o registros de eventos que se producen de forma secuencial durante un partido.
+
+La naturaleza dinámica de estos datos introduce un nivel de complejidad significativamente mayor en su tratamiento y modelización. A diferencia de los datos estáticos, donde el conjunto de observaciones suele considerarse cerrado, los datos dinámicos requieren modelos capaces de adaptarse a la evolución temporal, capturar dependencias entre observaciones sucesivas y, en muchos casos, manejar flujos continuos de información. En este contexto, resulta habitual diseñar esquemas de representación que permitan estructurar los datos dinámicos, por ejemplo, mediante ventanas temporales, agregaciones por intervalos o transformaciones que reduzcan la dimensionalidad temporal.
+
+Estos enfoques son especialmente efectivos cuando se trabaja con datos dinámicos estructurados, como tablas de series temporales multivariantes provenientes de sensores o sistemas de registro estandarizados. Sin embargo, en el caso de datos dinámicos no estructurados, como secuencias de vídeo, audio de comunicaciones técnicas o texto generado en tiempo real (por ejemplo, informes o anotaciones), el desafío es mayor. En estos escenarios, la tarea consiste en procesar la información conforme se genera, sin poder asumir de antemano una estructura fija ni una dimensionalidad constante, lo que exige métodos específicos de preprocesamiento, extracción de características y modelización.
+
+En el ámbito del Aprendizaje Automático aplicado al deporte, esta distinción entre datos estáticos y dinámicos no es meramente conceptual. Tiene implicaciones directas en la elección de modelos, en los procedimientos de validación y en la interpretación de resultados. Ignorar la dimensión temporal en datos intrínsecamente dinámicos puede conducir a modelos sesgados, con un rendimiento aparente elevado pero escasa capacidad de generalización en situaciones reales.
 
 Para más información sobre este tema, consultar [@weiss2012data].
+
+| **Dimensión** | **Datos estáticos** | **Datos dinámicos** |
+|----------------|----------------------------|-----------------------------|
+| Definición | Datos cuyos valores se consideran constantes durante el período de análisis | Datos cuyos valores evolucionan en el tiempo |
+| Variación temporal | Nula o despreciable | Explícita y continua |
+| Forma habitual de representación | Tabla de observaciones independientes | Series temporales, secuencias, flujos de datos |
+| Ejemplos deportivos | Altura, peso inicial de temporada, sexo, lateralidad, posición de juego, historial de lesiones (como atributo fijo) | Distancia recorrida por sesión, frecuencia cardíaca, velocidad instantánea, aceleraciones, tracking de jugadores y balón |
+| Fuente típica | Registros administrativos, fichas de jugador, bases de datos históricas | Sensores GPS, sistemas ópticos, wearables, eventos de partido |
+| Dependencia entre observaciones | Generalmente asumida como inexistente | Alta dependencia temporal entre observaciones consecutivas |
+| Complejidad del preprocesamiento | Baja o moderada | Alta: alineación temporal, sincronización, filtrado de ruido |
+| Implicaciones para el ML | Modelos clásicos sobre datos tabulares | Modelos temporales o transformaciones previas del tiempo |
+| Ejemplos de tareas | Segmentación de jugadores por perfil físico | Predicción de carga, detección de fatiga, análisis de secuencias de juego |
+| Riesgos habituales | Simplificación excesiva del contexto | Sobreajuste, fuga temporal de información, alta dimensionalidad |
+| Validación del modelo | Validación cruzada estándar | Validación temporal (train–test respetando el tiempo) |
+| Interpretación | Más directa y estable | Dependiente del contexto temporal y del horizonte de predicción |
 
 ## Obtención de datos
 
@@ -130,29 +150,31 @@ Despliega el siguiente panel para averiguar dónde localizar numerosos conjuntos
 
 Existen varias fuentes de conjuntos de datos de *benchmark* que puedes utilizar en proyectos de ciencia de datos. Algunas de las fuentes más populares y confiables incluyen:
 
-1.  **Kaggle:** Kaggle es una plataforma en línea que alberga competiciones de ciencia de datos y proporciona una amplia variedad de conjuntos de datos para prácticas y competiciones. Puedes explorar conjuntos de datos en su [sección de datasets](https://www.kaggle.com/datasets). Cuidado con los análisis de estos datos en la plataforma Kaggle, pues no siempre son correctos o precisos. ¡Ojo!
+1.  **MUSA:** Este repositorio es una recopilación organizada de conjuntos de datos útiles para el análisis deportivo. La idea es centralizar y facilitar el acceso a distintas fuentes de datos que puedan ser utilizados en proyectos de ciencia de datos, machine learning o visualización relacionados con el deporte. [MUSA datasets](https://github.com/MUSA-URJC/datos).
 
-2.  **UCI Machine Learning Repository:** La Universidad de California, Irvine (UCI), ofrece un amplio repositorio de conjuntos de datos de *benchmark* para ML. Puedes encontrarlos en su [página web](#0).
+2.  **R for sports data:** Análisis y la visualización de datos en el ámbito deportivo. Puedes explorar conjuntos de datos en su [sitio web](https://edbrooks.github.io/R_for_sports_data/).
 
-3.  **OpenML:** OpenML es una plataforma en línea que recopila y comparte conjuntos de datos, así como flujos de trabajo y resultados de la comunidad de ciencia de datos. Puedes explorar conjuntos de datos en su [sitio web](https://www.openml.org/).
+3.  **CRAN Task View: Sports Analytics:** colección de paquetes de R útiles para análisis de datos deportivos. Puedes explorar conjuntos de datos en su [sitio web](https://cran.r-project.org/web/views/SportsAnalytics.html).
 
-4.  **GitHub:** GitHub es una plataforma de desarrollo de software que también alberga una gran cantidad de repositorios públicos que contienen conjuntos de datos. Puedes utilizar la función de búsqueda de GitHub para encontrar conjuntos de datos relevantes.
+4.  **Kaggle:** Kaggle es una plataforma en línea que alberga competiciones de ciencia de datos y proporciona una amplia variedad de conjuntos de datos para prácticas y competiciones. Puedes explorar conjuntos de datos en su [sección de datasets](https://www.kaggle.com/datasets). Cuidado con los análisis de estos datos en la plataforma Kaggle, pues no siempre son correctos o precisos. ¡Ojo!
 
-5.  **Data.gov:** Data.gov es el portal de datos abiertos del gobierno de los Estados Unidos. Ofrece una amplia variedad de conjuntos de datos gubernamentales en áreas como salud, medio ambiente, educación y más.
+5.  **UCI Machine Learning Repository:** La Universidad de California, Irvine (UCI), ofrece un amplio repositorio de conjuntos de datos de *benchmark* para ML. Puedes encontrarlos en su [página web](#0).
 
-6.  **Google Dataset Search:** Google Dataset Search es una herramienta de búsqueda específica para conjuntos de datos. Te permite buscar conjuntos de datos en línea utilizando palabras clave relevantes.
+6.  **OpenML:** OpenML es una plataforma en línea que recopila y comparte conjuntos de datos, así como flujos de trabajo y resultados de la comunidad de ciencia de datos. Puedes explorar conjuntos de datos en su [sitio web](https://www.openml.org/).
 
-7.  **Awesome Public Datasets:** Este repositorio de GitHub contiene una lista de conjuntos de datos públicos en diversas categorías. Puedes encontrarlo [aquí](https://github.com/awesomedata/awesome-public-datasets).
+7.  **GitHub:** GitHub es una plataforma de desarrollo de software que también alberga una gran cantidad de repositorios públicos que contienen conjuntos de datos. Puedes utilizar la función de búsqueda de GitHub para encontrar conjuntos de datos relevantes.
 
-8.  **Datasets Subreddit:** La comunidad de Reddit tiene un subreddit llamado "*datasets*" donde los usuarios comparten y discuten conjuntos de datos interesantes. Puedes explorarlo en [r/datasets](https://www.reddit.com/r/datasets/).
+8.  **Data.gov:** Data.gov es el portal de datos abiertos del gobierno de los Estados Unidos. Ofrece una amplia variedad de conjuntos de datos gubernamentales en áreas como salud, medio ambiente, educación y más.
 
-9.  **World Bank Data:** El Banco Mundial ofrece una gran cantidad de datos relacionados con el desarrollo económico y social de países de todo el mundo. Puedes acceder a estos datos en su [sitio web](https://data.worldbank.org/).
+9.  **Google Dataset Search:** Google Dataset Search es una herramienta de búsqueda específica para conjuntos de datos. Te permite buscar conjuntos de datos en línea utilizando palabras clave relevantes.
 
-10. **Eurostat:** Eurostat es la oficina de estadísticas de la Unión Europea y proporciona una amplia gama de datos relacionados con la UE y sus países miembros. Puedes encontrar datos en su [sitio web](https://ec.europa.eu/eurostat/data/database).
+10. **Awesome Public Datasets:** Este repositorio de GitHub contiene una lista de conjuntos de datos públicos en diversas categorías. Puedes encontrarlo [aquí](https://github.com/awesomedata/awesome-public-datasets).
 
-11. [Datos abiertos del Gobierno de España](https://datos.gob.es/es)
+11. **Datasets Subreddit:** La comunidad de Reddit tiene un subreddit llamado "*datasets*" donde los usuarios comparten y discuten conjuntos de datos interesantes. Puedes explorarlo en [r/datasets](https://www.reddit.com/r/datasets/).
 
-12. [Penn Machine Learning Benchmarks](https://epistasislab.github.io/pmlb/) ([Artículo de referencia](https://link.springer.com/article/10.1186/s13040-017-0154-4))
+12. [Datos abiertos del Gobierno de España](https://datos.gob.es/es)
+
+13. [Penn Machine Learning Benchmarks](https://epistasislab.github.io/pmlb/) ([Artículo de referencia](https://link.springer.com/article/10.1186/s13040-017-0154-4))
 
 Recuerda que, antes de utilizar cualquier conjunto de datos, es importante verificar los términos de uso y asegurarte de tener permiso para utilizarlos según tus necesidades. Además, ten en cuenta las consideraciones éticas y de privacidad al trabajar con datos, especialmente si contienen información personal o sensible.
 :::
@@ -162,15 +184,33 @@ Recuerda que, antes de utilizar cualquier conjunto de datos, es importante verif
 R incluye en sus librerías numerosos conjuntos de datos. Para acceder a ellos, basta con cargar la librería correspondiente.
 
 ```{r}
-#| label: peng1
+# Resultados de siete ligas europeas de fútbol masculino. Incluye las temporadas 2010/2011 a 2019/2020. 
+
+library(EUfootball)
+head(Matches)
+```
+
+A veces los datos están disponibles en una dirección web.
+
+```{r}
+#| label: acb1
 #| include: true
 #| warning: false
 #| echo: true
 
-library(tidyverse)
-library(palmerpenguins)
+# Visualization of European basketball data Guillermo Vinue. 2025-12-09
+# Results described in the paper A Web Application for Interactive Visualization of European Basketball Data (https://doi.org/10.1089/big.2018.0124).
 
-summary(penguins)
+# Carga de paquetes
+library(BAwiR) 
+library(tidyverse) 
+library(FSA) 
+library(gridExtra) 
+# Figura 1
+# Cargamos el fichero de datos de partidos de la ACB desde la temporada 1985-1986 hasta la temporada 2017-2018:
+load(url("http://www.uv.es/vivigui/softw/data_app_acb.RData"))
+title <- " Number of Spanish and foreign players along the ACB seasons \n Data from www.acb.com"
+get_pop_pyramid(data_app_acb, title, "eng")
 ```
 
 Es posible leer datos desde una cuenta de git.
@@ -182,15 +222,73 @@ Es posible leer datos desde una cuenta de git.
 #| echo: true
 
 
-library (readr)
+# =========================
+# 1. Definir URLs (raw)
+# =========================
 
-urlfile="https://raw.githubusercontent.com/IsaacMartindeDiego/IA/master/datasets/california_housing.csv"
+url_matches_2024 <- "https://raw.githubusercontent.com/JeffSackmann/tennis_wta/master/wta_matches_qual_itf_2024.csv"
 
-mydata<-read_csv(url(urlfile))
+url_rankings <- "https://raw.githubusercontent.com/JeffSackmann/tennis_wta/master/wta_rankings_20s.csv"
 
-head(mydata)
-dim(mydata)
-summary(mydata)
+url_players <- "https://raw.githubusercontent.com/JeffSackmann/tennis_wta/master/wta_players.csv"
+
+
+# =========================
+# 2. Cargar librerías
+# =========================
+
+library(readr)
+library(dplyr)
+library(lubridate)
+
+
+# =========================
+# 3. Leer los datos
+# =========================
+
+matches_2024 <- read_csv(url_matches_2024,
+                         show_col_types = FALSE)
+
+rankings <- read_csv(url_rankings,
+                     show_col_types = FALSE)
+
+players <- read_csv(url_players,
+                    show_col_types = FALSE)
+
+
+# =========================
+# 4. Comprobaciones básicas
+# =========================
+
+# Dimensiones
+dim(matches_2024)
+dim(rankings)
+dim(players)
+
+# Estructura
+str(matches_2024)
+str(rankings)
+str(players)
+
+# Primeras filas
+head(matches_2024)
+head(rankings)
+head(players)
+
+
+# =========================
+# 5. Ejemplo mínimo de limpieza
+# =========================
+
+matches_2024 <- matches_2024 %>%
+  mutate(
+    tourney_date = ymd(tourney_date)
+  )
+
+rankings <- rankings %>%
+  mutate(
+    ranking_date = ymd(ranking_date)
+  )
 ```
 
 La estructura de datos más habitual para realizar análisis de datos es el **data frame**. ¿Has estudiado este concepto en cursos anteriores?. Los data frame son estructuras de datos de dos dimensiones (como una matriz) que pueden contener datos de diferentes tipos. Normalmente nos referimos a las filas de un data frame como observaciones o registros, mientras que las columnas reciben el nombre de campos, variables, o características.
@@ -321,6 +419,7 @@ En primer lugar os presentamos una forma muy manual de hacerlo. A veces es la m�
 #| echo: true
 
 # cargamos los datos
+library(palmerpenguins)
 data(penguins)
 dim(penguins)
 
