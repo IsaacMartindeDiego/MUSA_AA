@@ -11,7 +11,6 @@ En el transcurso de este tema, exploraremos brevemente temas de importancia crí
 En primer lugar, tratamos los tipos de datos más comunes organizándose mediante dos clasificaciones distintas.
 
 ::: {.callout-note title="Atención"}
-## Atención
 
 Según su **estructura**, los datos pueden dividirse en datos estructurados y datos no estructurados.
 
