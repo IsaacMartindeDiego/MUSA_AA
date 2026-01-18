@@ -31,21 +31,10 @@ permiten identificar patrones relevantes, realizar predicciones,
 clasificar comportamientos y apoyar procesos de decisión en contextos
 reales del deporte profesional y amateur.
 
-La asignatura tiene un marcado carácter aplicado. Los contenidos
-teóricos se complementarán con prácticas y estudios de caso basados en
-datos deportivos reales, con el objetivo de que el alumnado adquiera no
-solo competencias técnicas, sino también criterio crítico para
-seleccionar modelos, validar resultados e interpretar adecuadamente las
-salidas de los algoritmos.
+La asignatura tiene un marcado carácter aplicado. Los contenidos teóricos se complementarán con prácticas y estudios de caso basados en datos deportivos reales, con el objetivo de que el alumnado adquiera no solo competencias técnicas, sino también criterio crítico para seleccionar modelos, validar resultados e interpretar adecuadamente las salidas de los algoritmos.
 
 Como docentes de esta asignatura, nuestro objetivo es proporcionar una
-base sólida que os permita comprender, aplicar y evaluar modelos de
-Aprendizaje Automático en problemas reales del análisis de datos
-deportivos, reconociendo tanto su potencial como sus limitaciones. El
-Aprendizaje Automático constituye hoy una herramienta central en la
-analítica deportiva, y esta asignatura pretende prepararos para su uso
-responsable y fundamentado en contextos profesionales y de
-investigación.
+base sólida que permita a los estudiantes comprender, aplicar y evaluar modelos de Aprendizaje Automático en problemas reales del análisis de datos deportivos, reconociendo tanto su potencial como sus limitaciones. El Aprendizaje Automático constituye hoy una herramienta central en la analítica deportiva, y esta asignatura pretende preparar a los estudiantes para su uso responsable y fundamentado en contextos profesionales y de investigación.
 
 ::: {.callout-caution collapse="true"}
 ## Resultados de aprendizaje.
