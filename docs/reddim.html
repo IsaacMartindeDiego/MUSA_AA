@@ -2,21 +2,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.36">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Aprendizaje Automático - 4&nbsp; Técnicas de reducción de la dimensionalidad</title>
+<title>4&nbsp; Técnicas de reducción de la dimensionalidad – Aprendizaje Automático</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -27,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -41,48 +47,20 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+/* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
-.hanging div.csl-entry {
+.hanging-indent div.csl-entry {
   margin-left:2em;
   text-indent:-2em;
 }
@@ -96,8 +74,7 @@ div.csl-right-inline {
 }
 div.csl-indent {
   margin-left: 2em;
-}
-</style>
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -124,21 +101,57 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
-    "search-no-results-text": "Sín resultados",
+    "search-no-results-text": "Sin resultados",
     "search-matching-documents-text": "documentos encontrados",
-    "search-copy-link-title": "Copiar el enlace en la busqueda",
-    "search-hide-matches-text": "Esconder resultados adicionales",
-    "search-more-match-text": "hay más resultados en este documento",
-    "search-more-matches-text": "más resultados en este documento",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
     "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancelar",
-    "search-submit-button-title": "Eviar"
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -146,11 +159,16 @@ div.csl-indent {
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-    <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Técnicas de reducción de la dimensionalidad</span></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./reddim.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Técnicas de reducción de la dimensionalidad</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
       </button>
     </div>
   </nav>
@@ -158,94 +176,107 @@ div.csl-indent {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Aprendizaje Automático</a> 
     </div>
       </div>
-      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
+        <div id="quarto-search" class="" title="Buscar"></div>
         </div>
-      </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">Prefacio</a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></a>
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Datos</span></a>
+  <a href="./data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Datos</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./eda.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Análisis Exploratorio de Datos</span></a>
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Análisis Exploratorio de Datos</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./reddim.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Técnicas de reducción de la dimensionalidad</span></a>
+  <a href="./reddim.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Técnicas de reducción de la dimensionalidad</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./aprnosup.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Aprendizaje no supervisado</span></a>
+  <a href="./aprnosup.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Aprendizaje no supervisado</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./eval.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Medidas de rendimiento</span></a>
+  <a href="./eval.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Medidas de rendimiento</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./aprsup.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Aprendizaje supervisado</span></a>
+  <a href="./aprsup.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Aprendizaje supervisado</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./reglas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Reglas de asociación</span></a>
+  <a href="./reglas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Reglas de asociación</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nuevas.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Nuevas tendencias</span></a>
+  <a href="./nuevas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Nuevas tendencias</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./conclusiones.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Conclusiones</span></a>
+  <a href="./conclusiones.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Conclusiones</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./references.html" class="sidebar-item-text sidebar-link">Bibliografía</a>
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bibliografía</span></a>
   </div>
 </li>
     </ul>
     </div>
 </nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc">
-    <h2 id="toc-title">Indice de contenidos</h2>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
-  <li><a href="#análisis-de-componentes-principales-pca-1" id="toc-análisis-de-componentes-principales-pca-1" class="nav-link active" data-scroll-target="#análisis-de-componentes-principales-pca-1"> <span class="header-section-number">4.1</span> Análisis de Componentes Principales (PCA)</a>
+  <li><a href="#análisis-de-componentes-principales-pca-1" id="toc-análisis-de-componentes-principales-pca-1" class="nav-link active" data-scroll-target="#análisis-de-componentes-principales-pca-1"><span class="header-section-number">4.1</span> Análisis de Componentes Principales (PCA)</a>
   <ul class="collapse">
-  <li><a href="#profundicemos-un-poco-más" id="toc-profundicemos-un-poco-más" class="nav-link" data-scroll-target="#profundicemos-un-poco-más"> <span class="header-section-number">4.1.1</span> <strong>Profundicemos un poco más</strong></a></li>
-  <li><a href="#pca-en-r" id="toc-pca-en-r" class="nav-link" data-scroll-target="#pca-en-r"> <span class="header-section-number">4.1.2</span> PCA en R</a></li>
+  <li><a href="#pca-en-r" id="toc-pca-en-r" class="nav-link" data-scroll-target="#pca-en-r"><span class="header-section-number">4.1.1</span> PCA en R</a></li>
   </ul></li>
-  <li><a href="#selección-de-características" id="toc-selección-de-características" class="nav-link" data-scroll-target="#selección-de-características"> <span class="header-section-number">4.2</span> Selección de características</a></li>
+  <li><a href="#interpretación-y-limitaciones" id="toc-interpretación-y-limitaciones" class="nav-link" data-scroll-target="#interpretación-y-limitaciones"><span class="header-section-number">4.2</span> Interpretación y limitaciones</a></li>
+  <li><a href="#selección-de-características" id="toc-selección-de-características" class="nav-link" data-scroll-target="#selección-de-características"><span class="header-section-number">4.3</span> Selección de características</a></li>
   </ul>
 </nav>
     </div>
@@ -254,7 +285,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-reddim" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Técnicas de reducción de la dimensionalidad</span></span></h1>
+<h1 class="title"><span id="sec-reddim" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Técnicas de reducción de la dimensionalidad</span></span></h1>
 </div>
 
 
@@ -262,23 +293,26 @@ div.csl-indent {
 <div class="quarto-title-meta">
 
     
+  
     
   </div>
   
 
+
 </header>
 
-<p>En el complejo mundo de la ciencia de datos, nos encontramos a menudo con conjuntos de datos que abarcan una amplia variedad de variables. Estas variables, en su mayoría cuantitativas, pueden proporcionar una gran cantidad de información, pero también pueden convertirse en un desafío cuando se trata de comprender y analizar de manera efectiva los datos. La gestión de grandes conjuntos de variables puede ser abrumadora y puede llevar a problemas como la alta correlación entre ellas, dificultando la extracción de información valiosa y la visualización clara de los datos. Imagina un conjunto de datos con más de <span class="math inline">\(50\)</span> variables. Como científico de datos, has de analizar todas y cada una de ellas, así como sus posibles relaciones.</p>
-<p>Es en este contexto que entran en juego las “<em>Técnicas de Reducción de la Dimensión</em>”. Estas técnicas son herramientas que nos permiten encontrar un equilibrio entre la riqueza de información y la simplicidad en el análisis. El objetivo principal de la reducción de la dimensión es identificar un conjunto más pequeño de variables, llamadas “<em>variables latentes</em>” o “<em>componentes principales</em>”, que capturen la mayor parte de la información esencial contenida en las variables originales. Este proceso se realiza con el menor costo de información posible, lo que facilita la gestión y el análisis de datos complejos.</p>
-<p>Las ventajas de la reducción de la dimensión son múltiples. En primer lugar, permite reducir la cantidad de información utilizada, lo que puede ser especialmente útil cuando se trabaja con grandes conjuntos de datos. Además, la eliminación de problemas de alta correlación entre variables ayuda a eliminar la redundancia en los datos y a prevenir posibles distorsiones en los resultados del análisis. Pero quizás una de las ventajas más notables es la posibilidad de visualizar los datos de manera sencilla, a menudo en solo dos dimensiones, lo que facilita la interpretación y la comunicación de resultados.</p>
-<p>Sin embargo, es importante mencionar una desventaja potencial de estas técnicas: la falta de <strong>explicabilidad</strong> de las nuevas variables. Dado que estas se construyen como combinaciones de las originales, a menudo requieren la experiencia de un experto en el dominio para su correcta interpretación. Esto significa que, si bien la reducción de la dimensión simplifica el análisis, también puede introducir cierta complejidad en la comprensión de las relaciones subyacentes entre las variables.</p>
+
+<p>En el análisis de datos deportivos es habitual trabajar con conjuntos de datos que incluyen <strong>muchas variables simultáneamente</strong>: métricas físicas (carga externa e interna), indicadores técnicos (pases, tiros, pérdidas), variables contextuales (rival, local/visitante, ritmo de juego), o descriptores derivados de tracking y sensores. Esta riqueza de información es valiosa, pero también introduce dificultades prácticas: variables altamente correlacionadas, redundancia, ruido y una complejidad que puede dificultar tanto el análisis exploratorio como la construcción de modelos fiables. No es raro encontrarse con decenas —o cientos— de variables por jugador, sesión o partido.</p>
+<p>En este contexto cobran especial interés las <strong>técnicas de reducción de la dimensionalidad</strong>, cuyo objetivo es representar los datos en un espacio de menor dimensión conservando, en la medida de lo posible, la información relevante. En términos intuitivos, se trata de sustituir un conjunto grande de variables originales por un conjunto más pequeño de <strong>componentes</strong> o <strong>factores latentes</strong> que capturen la estructura principal de variación presente en los datos. Estas técnicas permiten simplificar la representación del rendimiento o del comportamiento deportivo sin tener que ignorar por completo la complejidad del fenómeno.</p>
+<p>Las ventajas en deporte son claras. En primer lugar, facilitan la <strong>visualización</strong> y la exploración: por ejemplo, representar perfiles de jugadores o sesiones de entrenamiento en dos o tres dimensiones para detectar agrupamientos, transiciones o valores atípicos. En segundo lugar, ayudan a mitigar problemas comunes en modelización deportiva, como la <strong>multicolinealidad</strong> (por ejemplo, múltiples métricas de carga que reflejan el mismo patrón subyacente) y el riesgo de sobreajuste cuando el número de variables crece respecto al número de observaciones. Además, pueden servir como etapa previa a tareas de ML como clustering, clasificación o detección de anomalías.</p>
+<p>Ahora bien, estas técnicas también tienen una limitación relevante en un máster orientado al deporte: la <strong>interpretabilidad</strong>. Los componentes reducidos suelen ser combinaciones de variables originales y, aunque pueden capturar patrones estadísticos de forma eficiente, no siempre se traducen directamente en conceptos deportivos claros (“intensidad”, “fatiga”, “control del juego”, etc.). Por ello, su uso responsable exige combinar el análisis matemático con conocimiento del dominio: interpretar los componentes, validar que tienen sentido deportivo y evitar conclusiones excesivas basadas únicamente en proyecciones en baja dimensión.</p>
 <p>Despliega los paneles siguientes para descrubir algunas de las técnicas más conocidas.</p>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Análisis de Componentes Principales (PCA)
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -289,12 +323,12 @@ Análisis de Componentes Principales (PCA)
 </div>
 </div>
 </div>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Análisis de factor
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -305,12 +339,12 @@ Análisis de factor
 </div>
 </div>
 </div>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Reducción de la dimensión basada en selección
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -321,12 +355,12 @@ Reducción de la dimensión basada en selección
 </div>
 </div>
 </div>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Análisis Discriminante Lineal (LDA)
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -337,12 +371,12 @@ Análisis Discriminante Lineal (LDA)
 </div>
 </div>
 </div>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Descomposición en Valores Singulares (SVD)
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -353,12 +387,12 @@ Descomposición en Valores Singulares (SVD)
 </div>
 </div>
 </div>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 t-Distributed Stochastic Neighbor Embedding (t-SNE)
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -369,12 +403,12 @@ t-Distributed Stochastic Neighbor Embedding (t-SNE)
 </div>
 </div>
 </div>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Autoencoders
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -385,12 +419,12 @@ Autoencoders
 </div>
 </div>
 </div>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Reducción de la dimensión basada en la ingeniería de características
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -401,14 +435,14 @@ Reducción de la dimensión basada en la ingeniería de características
 </div>
 </div>
 </div>
-<p>En este tema, exploraremos en detalle las técnicas más utilizadas para la reducción de la dimensión, proporcionando ejemplos prácticos y pautas para su aplicación efectiva. Estas técnicas son esenciales para cualquier científico de datos que desee extraer conocimiento valioso de grandes conjuntos de datos y simplificar el proceso de análisis sin perder de vista la interpretación de los resultados.</p>
+<p>En este tema, exploraremos en detalle las técnicas más utilizadas para la reducción de la dimensión, proporcionando ejemplos prácticos y pautas para su aplicación efectiva. Estas técnicas son esenciales para cualquier analista de datos que desee extraer conocimiento valioso de grandes conjuntos de datos y simplificar el proceso de análisis sin perder de vista la interpretación de los resultados.</p>
 <p>Por tanto, podemos decir que los métodos de reducción de dimensionalidad son técnicas que se utilizan para reducir la cantidad de variables en un conjunto de datos mientras se intenta retener la información relevante. Sin embargo, existen enfoques adicionales para realizar la reducción de la dimensionalidad, que se clasifican comúnmente en tres categorías: <em>filter</em>, <em>wrapper</em> y <em>embedded</em> <span class="citation" data-cites="john1994irrelevant">(<a href="references.html#ref-john1994irrelevant" role="doc-biblioref">John, Kohavi, y Pfleger 1994</a>)</span>.</p>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Métodos filter
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -419,12 +453,12 @@ Métodos filter
 </div>
 </div>
 </div>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Métodos wrapper
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -435,12 +469,12 @@ Métodos wrapper
 </div>
 </div>
 </div>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Métodos embedded:
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -463,19 +497,18 @@ Métodos embedded:
 <li><p><strong>Transformación de datos:</strong> Finalmente, los datos originales se transforman en el espacio de los componentes principales. Esto significa que las variables originales se combinan linealmente para formar nuevas variables (los componentes principales) que son ortogonales entre sí. Es decir, se crean nuevas variables, como combinación lineal de las originales, con la particularidad de que esas nuevas variables son incorreladas y de varianza <span class="math inline">\(1\)</span>. Por lo tanto, estos componentes principales no tienen multicolinealidad, lo que es útil en análisis posteriores.</p></li>
 </ol>
 <p>El PCA se utiliza en diversas aplicaciones, como reducción de dimensionalidad, compresión de imágenes, análisis de datos, reconocimiento de patrones, etc. Permite simplificar datos complejos mientras se retiene la mayor cantidad posible de información importante. Al seleccionar un número apropiado de componentes principales, es posible reducir la dimensionalidad de los datos sin perder significado, lo que puede mejorar la eficiencia del análisis y la visualización.</p>
-<section id="profundicemos-un-poco-más" class="level3" data-number="4.1.1">
-<h3 data-number="4.1.1" class="anchored" data-anchor-id="profundicemos-un-poco-más"><span class="header-section-number">4.1.1</span> <strong>Profundicemos un poco más</strong></h3>
+<p><strong>Profundicemos un poco más</strong></p>
 <p>El PCA busca encontrar una representación más eficiente (menor dimensión) de los datos preservando la información contenida en ellos. La idea fundamental es que <strong>la varianza de los datos representa la cantidad de información que contienen</strong>, y PCA rota el sistema de coordenadas para encontrar las direcciones en las que la varianza es máxima.</p>
-<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-caution callout-titled" title="Para recordar">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Para recordar
 </div>
 </div>
-<div class="callout-body-container callout-body" title="Para recordar">
+<div class="callout-body-container callout-body">
 <p>Relación entre los conceptos de varianza e información.</p>
 </div>
 </div>
@@ -565,7 +598,7 @@ L(\mathbf{w}_2, \lambda_2) = \mathbf{w}_1^{t}\mathbf{S}\mathbf{w}_1 +\mathbf{w}_
 <p>El procedimiento descrito equivale a realizar una rotación del sistema de coordenadas original a un nuevo sistema donde los ejes están alineados con las direcciones de máxima varianza. Los nuevos ejes (componentes principales) son ortogonales entre sí y capturan la mayor cantidad de información posible en las primeras componentes, permitiendo reducir la dimensionalidad reteniendo la información más relevante.</p>
 <p>Mediante la siguiente simulación en R podemos ver la transformación que se logra tras aplicar PCA al conjunto de datos:</p>
 <div class="cell">
-<details>
+<details class="code-fold">
 <summary>Click para ver el código</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo transformación ortonormal PCA</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -608,235 +641,248 @@ L(\mathbf{w}_2, \lambda_2) = \mathbf{w}_1^{t}\mathbf{S}\mathbf{w}_1 +\mathbf{w}_
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="reddim_files/figure-html/interpret1-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="reddim_files/figure-html/interpret1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-</section>
-<section id="pca-en-r" class="level3" data-number="4.1.2">
-<h3 data-number="4.1.2" class="anchored" data-anchor-id="pca-en-r"><span class="header-section-number">4.1.2</span> PCA en R</h3>
-<p>Trabajemos con un ejemplo de datos en R. Este conjunto de datos contiene estadísticas, en arrestos por cada <span class="math inline">\(100.000\)</span> residentes por asalto (Assault), asesinato (Murder) y secuestro (Rape) en los <span class="math inline">\(50\)</span> Estados de USA en 1973. También se proporciona el porcentaje de la población en áreas urbanas (UrbanPop).</p>
+</div>
+<section id="pca-en-r" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="pca-en-r"><span class="header-section-number">4.1.1</span> PCA en R</h3>
+<p>Trabajemos ahora con un ejemplo de datos deportivos reales. Utilizaremos estadísticas de partidos de tenis femenino (WTA), donde cada observación corresponde a un partido, y las variables recogen información básica de las jugadoras implicadas.</p>
+<p>En concreto, consideraremos las siguientes variables cuantitativas:</p>
+<ul>
+<li><p><code>winner_rank</code>: ranking de la jugadora ganadora</p></li>
+<li><p><code>loser_rank</code>: ranking de la jugadora perdedora</p></li>
+<li><p><code>winner_age</code>: edad de la ganadora</p></li>
+<li><p><code>loser_age</code>: edad de la perdedora</p></li>
+<li><p><code>rank_diff</code>: diferencia de ranking entre perdedora y ganadora</p></li>
+</ul>
+<p>Nota que estas variables contienen información relevante, pero presentan escalas muy diferentes (ranking vs edad).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(USArrests)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Leemos y preparamos los datos </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ lubridate 1.9.4     ✔ tibble    3.2.1
+✔ purrr     1.0.4     ✔ tidyr     1.3.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::combine() masks gridExtra::combine()
+✖ dplyr::filter()  masks stats::filter()
+✖ dplyr::lag()     masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>url_matches <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/JeffSackmann/tennis_wta/master/wta_matches_2023.csv"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>tennis <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(url_matches, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> tennis <span class="sc">%&gt;%</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(winner_rank, loser_rank, winner_age, loser_age) <span class="sc">%&gt;%</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rank_diff =</span> loser_rank <span class="sc">-</span> winner_rank)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>           Murder Assault UrbanPop Rape
-Alabama      13.2     236       58 21.2
-Alaska       10.0     263       48 44.5
-Arizona       8.1     294       80 31.0
-Arkansas      8.8     190       50 19.5
-California    9.0     276       91 40.6
-Colorado      7.9     204       78 38.7</code></pre>
+<pre><code># A tibble: 6 × 5
+  winner_rank loser_rank winner_age loser_age rank_diff
+        &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1           3         27       28.8      29.1        24
+2          11         54       27.8      24          43
+3           3          1       28.8      21.5        -2
+4          11         48       27.8      30.8        37
+5          27          6       29.1      27.4       -21
+6          54        199       24        25.8       145</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(USArrests)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>     Murder          Assault         UrbanPop          Rape      
- Min.   : 0.800   Min.   : 45.0   Min.   :32.00   Min.   : 7.30  
- 1st Qu.: 4.075   1st Qu.:109.0   1st Qu.:54.50   1st Qu.:15.07  
- Median : 7.250   Median :159.0   Median :66.00   Median :20.10  
- Mean   : 7.788   Mean   :170.8   Mean   :65.54   Mean   :21.23  
- 3rd Qu.:11.250   3rd Qu.:249.0   3rd Qu.:77.75   3rd Qu.:26.18  
- Max.   :17.400   Max.   :337.0   Max.   :91.00   Max.   :46.00  </code></pre>
+<pre><code>  winner_rank        loser_rank       winner_age      loser_age    
+ Min.   :   1.00   Min.   :   1.0   Min.   :15.90   Min.   :15.70  
+ 1st Qu.:  18.00   1st Qu.:  36.0   1st Qu.:22.80   1st Qu.:23.00  
+ Median :  51.00   Median :  73.0   Median :26.10   Median :26.40  
+ Mean   :  81.08   Mean   : 122.5   Mean   :26.11   Mean   :26.46  
+ 3rd Qu.:  95.00   3rd Qu.: 134.0   3rd Qu.:28.80   3rd Qu.:29.30  
+ Max.   :1103.00   Max.   :1321.0   Max.   :43.10   Max.   :43.10  
+   rank_diff       
+ Min.   :-1036.00  
+ 1st Qu.:  -20.00  
+ Median :   20.00  
+ Mean   :   41.46  
+ 3rd Qu.:   71.00  
+ Max.   : 1241.00  </code></pre>
 </div>
 </div>
-<p>Para realizar PCA sobre los datos USArrests:</p>
+<p>Aplicamos PCA directamente sobre las variables:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prcomp</span>(USArrests)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prcomp</span>(df)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Standard deviations (1, .., p=4):
-[1] 83.732400 14.212402  6.489426  2.482790
+<pre><code>Standard deviations (1, .., p=5):
+[1] 2.200187e+02 1.386178e+02 4.485700e+00 4.140100e+00 1.666412e-14
 
-Rotation (n x k) = (4 x 4):
-                PC1         PC2         PC3         PC4
-Murder   0.04170432 -0.04482166  0.07989066 -0.99492173
-Assault  0.99522128 -0.05876003 -0.06756974  0.03893830
-UrbanPop 0.04633575  0.97685748 -0.20054629 -0.05816914
-Rape     0.07515550  0.20071807  0.97408059  0.07232502</code></pre>
+Rotation (n x k) = (5 x 5):
+                      PC1          PC2           PC3           PC4
+winner_rank  0.0270328523  0.816047401  0.0012019482 -0.0010418434
+loser_rank   0.7202354541  0.384611940  0.0009085856 -0.0006224728
+winner_age  -0.0002818528 -0.001544600  0.2070064869 -0.9783383102
+loser_age   -0.0004345966 -0.001162302  0.9783383659  0.2070084589
+rank_diff    0.6932026018 -0.431435462 -0.0002933627  0.0004193706
+                      PC5
+winner_rank -5.773503e-01
+loser_rank   5.773503e-01
+winner_age  -3.079134e-17
+loser_age   -4.640385e-17
+rank_diff   -5.773503e-01</code></pre>
 </div>
 </div>
 <p>Las <em>standard deviations</em> son los autovalores de la matriz de correlaciones, y representan la variabilidad en cada componente. A mayor valor, más relevante es la variable correspondiente a efectos de visualización. Si queremos visualizar la importancia relativa de cada componente, haremos lo siguiente:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">prcomp</span>(USArrests))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">prcomp</span>(df))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="reddim_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="reddim_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>De modo numérico:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">prcomp</span>(USArrests))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">prcomp</span>(df))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Importance of components:
-                           PC1      PC2    PC3     PC4
-Standard deviation     83.7324 14.21240 6.4894 2.48279
-Proportion of Variance  0.9655  0.02782 0.0058 0.00085
-Cumulative Proportion   0.9655  0.99335 0.9991 1.00000</code></pre>
+                            PC1      PC2    PC3     PC4       PC5
+Standard deviation     220.0187 138.6178 4.4857 4.14010 1.666e-14
+Proportion of Variance   0.7155   0.2840 0.0003 0.00025 0.000e+00
+Cumulative Proportion    0.7155   0.9994 0.9998 1.00000 1.000e+00</code></pre>
 </div>
 </div>
-<p>Como vemos, la variabilidad de los datos se explica mayoritariamente por la primera componente principal PC1 que, tal y como se puede ver en la matriz <em>Rotation</em>, da un peso de <span class="math inline">\(0.9952\)</span> a la variable <code>Assault</code>, y pesos cercanos a cero al resto de variables. En la tabla anterior se observa que la proporción de varianza explicada por la primera componente es del <span class="math inline">\(96.6\%\)</span>, es decir, es prácticamente la única relevante. Queda muy poca variabilidad para ser explicada por el resto de variable. ¿Qué está sucediendo? Si nos fijamos en los datos de USArrests, la magnitud de los valores de <code>Assault</code> es mucho mayor que la magnitud de las otras variables. Por ejemplo, en el caso de Alabama, <span class="math inline">\(236\)</span> para la variable <code>Assault</code> frente a <span class="math inline">\(13.2\)</span> de <code>Murder</code> ó <span class="math inline">\(21.2\)</span> de <code>Rape</code>. Claramente es la variable que va a tener más influencia en el resultado final, tal y como se ve en el gráfico precedente. La segunda componente más influyente es PC2, que depende de <code>UrbanPop</code>, la siguiente variable en magnitud, y así sucesivamente.</p>
-<p>¿Tiene sentido que una variable sea más influyente que otra por el mero hecho de estar medida en diferentes unidades de medida? Realmente no.¿Cómo solucionar este problema? La respuesta es la <strong>estandarización</strong>. Repitamos el análisis, pero estandarizando los datos:</p>
+<p>Observamos que la primera componente principal explica la mayor parte de la variabilidad. Si inspeccionamos la matriz de rotaciones:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">prcomp</span>(USArrests,<span class="at">scale=</span>T))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="reddim_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prcomp</span>(df)<span class="sc">$</span>rotation</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      PC1          PC2           PC3           PC4
+winner_rank  0.0270328523  0.816047401  0.0012019482 -0.0010418434
+loser_rank   0.7202354541  0.384611940  0.0009085856 -0.0006224728
+winner_age  -0.0002818528 -0.001544600  0.2070064869 -0.9783383102
+loser_age   -0.0004345966 -0.001162302  0.9783383659  0.2070084589
+rank_diff    0.6932026018 -0.431435462 -0.0002933627  0.0004193706
+                      PC5
+winner_rank -5.773503e-01
+loser_rank   5.773503e-01
+winner_age  -3.079134e-17
+loser_age   -4.640385e-17
+rank_diff   -5.773503e-01</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">prcomp</span>(USArrests,<span class="at">scale=</span>T))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>vemos que esta primera componente está dominada casi exclusivamente por las variables relacionadas con el ranking, mientras que las variables de edad tienen un peso mucho menor.</p>
+<p>Esto no es sorprendente: los valores de <code>winner_rank</code> y <code>loser_rank</code> pueden alcanzar varios cientos, mientras que la edad suele oscilar en un rango mucho más reducido (aproximadamente entre 15 y 40 años). Como consecuencia, PCA prioriza las variables con mayor magnitud numérica.</p>
+<p>¿Tiene sentido que una variable sea más influyente únicamente por estar medida en una escala mayor? Desde el punto de vista del análisis deportivo, no necesariamente.</p>
+<p>Para evitar este efecto, repetimos el análisis estandarizando las variables:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">prcomp</span>(df, <span class="at">scale =</span> <span class="cn">TRUE</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reddim_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">prcomp</span>(df, <span class="at">scale =</span> <span class="cn">TRUE</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Importance of components:
-                          PC1    PC2     PC3     PC4
-Standard deviation     1.5749 0.9949 0.59713 0.41645
-Proportion of Variance 0.6201 0.2474 0.08914 0.04336
-Cumulative Proportion  0.6201 0.8675 0.95664 1.00000</code></pre>
+                         PC1    PC2    PC3    PC4       PC5
+Standard deviation     1.330 1.1194 1.0061 0.9822 1.858e-16
+Proportion of Variance 0.354 0.2506 0.2024 0.1929 0.000e+00
+Cumulative Proportion  0.354 0.6046 0.8071 1.0000 1.000e+00</code></pre>
 </div>
 </div>
-<p>Como puede verse, con las dos primeras componentes recogemos prácticamente el <span class="math inline">\(87\%\)</span> de la variabilidad. Esto quiere decir que un gráfico de los datos de <code>USAarrests</code>, representados por las dos primeras componentes principales será suficientemente representativo.</p>
+<p>Ahora observamos que:</p>
+<ul>
+<li><p>La variabilidad se reparte de forma más equilibrada entre las componentes.</p></li>
+<li><p>Las dos primeras componentes explican una proporción sustancial de la variabilidad total.</p></li>
+<li><p>El análisis ya no está dominado exclusivamente por el ranking.</p></li>
+</ul>
 <p>Antes de ir al gráfico, analicemos la matriz de rotaciones, en busca de interpretación semántica para las componentes principales:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prcomp</span>(USArrests,<span class="at">scale=</span>T)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prcomp</span>(df, <span class="at">scale =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>rotation</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Standard deviations (1, .., p=4):
-[1] 1.5748783 0.9948694 0.5971291 0.4164494
-
-Rotation (n x k) = (4 x 4):
-                PC1        PC2        PC3         PC4
-Murder   -0.5358995 -0.4181809  0.3412327  0.64922780
-Assault  -0.5831836 -0.1879856  0.2681484 -0.74340748
-UrbanPop -0.2781909  0.8728062  0.3780158  0.13387773
-Rape     -0.5434321  0.1673186 -0.8177779  0.08902432</code></pre>
+<pre><code>                    PC1        PC2         PC3         PC4           PC5
+winner_rank  0.06562643  0.8565645  0.26341406 -0.05345405 -4.355986e-01
+loser_rank   0.71980188  0.2372569  0.10983299 -0.01252019  6.429420e-01
+winner_age  -0.03038205 -0.2360852  0.62427646 -0.74405620 -1.387779e-17
+loser_age   -0.04020540 -0.1779876  0.72382490  0.66541827 -1.387779e-17
+rank_diff    0.68923064 -0.3501296 -0.07004398  0.02418277 -6.299837e-01</code></pre>
 </div>
 </div>
-<p>PC1 asigna pesos, todos del mismo signo a las variables. Podemos comprobar que viene a representar un promedio ponderado de las variables originales. Es decir, es una medida resumen que permite ordenar, en dicha componente, el comportamiento de los <span class="math inline">\(50\)</span> estados desde el punto de vista de los delitos cometidos. Al concentrarnos en la segunda componente principal, los estados serían ordenados en cuanto a su población urbana en un sentido, ponderando en sentido contrario el número de asesinatos. En PC3, el orden viene principalmente dado por los secuestros.</p>
-<p>En cualquier caso, debemos tener presente que no hay ninguna garantía de interpretabilidad en un análisis PCA.</p>
-<p>Dibujamos los datos proyectados sobre las dos primeras componentes:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">prcomp</span>(USArrests,<span class="at">scale=</span>T)<span class="sc">$</span>x[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="reddim_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>Sería deseable poder ver los nombres de los estados, en lugar de simples puntos. Para ello:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">prcomp</span>(USArrests,<span class="at">scale=</span>T)<span class="sc">$</span>x[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>],<span class="at">type=</span><span class="st">"n"</span>)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fu">prcomp</span>(USArrests,<span class="at">scale=</span>T)<span class="sc">$</span>x[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>],<span class="fu">rownames</span>(USArrests))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="reddim_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>Puntos cercanos en el mapa indican comportamiento/perfil similar en cuanto a los delitos cometidos. Del gráfico podemos inferir que Florida, Nevada y California son tres puntos extremos en cuanto al comportamiento criminal. Pero, ¿en qué sentido? ¿muy baja o muy alta criminalidad? En este caso particular, la respuesta es muy alta, dado que en la matriz de rotación todos los pesos de la primera componente principal son negativos, luego a mayor valor en las variables originales, situación más a la izquierda en PC1. En cuanto a PC2, tenemos comportamientos extremos por ejemplo en Hawai por abajo y en Mississippi y North Carolina por arriba. En el primer caso hay mucha población urbana y pocos asesinatos. En el segundo, al contrario.</p>
-<p>¿Cómo mejorar el gráfico? Un modo posible es incorporar la información de las variables utilizando la técnica del <em>biplot</em>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">biplot</span>(<span class="fu">prcomp</span>(USArrests,<span class="at">scale=</span>T)) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="reddim_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>Como vemos, la primera componente viene a situarse donde se situaría el promedio de las cuatro variables. Los estados casi se ordenan en la segunda componente por <code>UrbanPop</code> en un sentido, y por <code>Murder</code> en el otro, como ya hemos deducido/comprobado.</p>
-<p>A continuación presentamos el mismo análisis para las variables continuas de la base de datos <code>bank</code>:</p>
-<div class="cell">
-<details>
-<summary>Click para ver el código</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (dplyr)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>bank <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">'https://raw.githubusercontent.com/rafiag/DTI2020/main/data/bank.csv'</span>)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>df<span class="ot">=</span> bank <span class="sc">%&gt;%</span> </span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(balance<span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> previous<span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> pdays<span class="sc">&gt;</span><span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>( <span class="at">log.balance=</span><span class="fu">log</span>(balance),</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">log.age=</span><span class="fu">log</span>(age),</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">log.campaign=</span><span class="fu">log</span>(campaign),</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">log.previous=</span><span class="fu">log</span>(previous),</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">log.pdays =</span> <span class="fu">log</span>(pdays),</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">log.duration=</span><span class="fu">log</span>(duration)) <span class="sc">%&gt;%</span></span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(log.balance,log.age,log.campaign,log.duration,log.previous,log.pdays)</span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co"># No escalado</span></span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="fu">prcomp</span>(df)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Standard deviations (1, .., p=6):
-[1] 1.5630485 0.8334400 0.7775226 0.7240114 0.5268730 0.2958263
-
-Rotation (n x k) = (6 x 6):
-                      PC1         PC2         PC3         PC4          PC5
-log.balance  -0.997633646 -0.04632142 -0.04352014 0.006913800  0.002158896
-log.age      -0.026975335  0.01790770  0.02192873 0.005198189  0.006857026
-log.campaign -0.001512975 -0.09417225  0.12317132 0.240791927 -0.958101859
-log.duration -0.051244928  0.98604272  0.13674993 0.017279203 -0.075011078
-log.previous -0.025152050 -0.10278316  0.79628880 0.540931843  0.248366571
-log.pdays     0.027175018  0.07629283 -0.57417555 0.805629317  0.121146742
-                      PC6
-log.balance  -0.025198601
-log.age       0.999198047
-log.campaign  0.004266074
-log.duration -0.021631678
-log.previous -0.020831104
-log.pdays     0.006944817</code></pre>
-</div>
-<details>
-<summary>Click para ver el código</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">prcomp</span>(df))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Importance of components:
-                          PC1    PC2    PC3    PC4     PC5     PC6
-Standard deviation     1.5630 0.8334 0.7775 0.7240 0.52687 0.29583
-Proportion of Variance 0.5275 0.1500 0.1305 0.1132 0.05994 0.01889
-Cumulative Proportion  0.5275 0.6775 0.8080 0.9212 0.98111 1.00000</code></pre>
-</div>
-<details>
-<summary>Click para ver el código</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">biplot</span>(<span class="fu">prcomp</span>(df))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="reddim_files/figure-html/peng1-1.png" class="img-fluid" width="672"></p>
-</div>
-<details>
-<summary>Click para ver el código</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Escalamos los datos:</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">prcomp</span>(df, <span class="at">scale=</span>T)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Standard deviations (1, .., p=6):
-[1] 1.1051338 1.0832463 1.0118040 0.9678377 0.9316200 0.8814102
-
-Rotation (n x k) = (6 x 6):
-                    PC1        PC2        PC3         PC4          PC5
-log.balance  -0.5333580 -0.2738588 -0.1232941  0.32734897  0.711380533
-log.age      -0.5238196 -0.2570122 -0.1980986  0.37723756 -0.683622355
-log.campaign -0.2475502  0.6476384 -0.3372288 -0.03596251  0.118453560
-log.duration -0.2156187 -0.4664755 -0.2567977 -0.79051329  0.010808413
-log.previous -0.5022597  0.4683898  0.1226574 -0.34628989 -0.111134086
-log.pdays     0.2847895  0.0502219 -0.8665116  0.06643204 -0.009967902
-                    PC6
-log.balance  -0.1100436
-log.age       0.1032814
-log.campaign  0.6246884
-log.duration  0.2119813
-log.previous -0.6172794
-log.pdays    -0.4012702</code></pre>
-</div>
-<details>
-<summary>Click para ver el código</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">prcomp</span>(df, <span class="at">scale=</span>T))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Importance of components:
-                          PC1    PC2    PC3    PC4    PC5    PC6
-Standard deviation     1.1051 1.0832 1.0118 0.9678 0.9316 0.8814
-Proportion of Variance 0.2036 0.1956 0.1706 0.1561 0.1447 0.1295
-Cumulative Proportion  0.2036 0.3991 0.5697 0.7259 0.8705 1.0000</code></pre>
-</div>
-<details>
-<summary>Click para ver el código</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">biplot</span>(<span class="fu">prcomp</span>(df, <span class="at">scale=</span>T))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="reddim_files/figure-html/peng1-2.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>Dejamos la interpretación de los resultados como tarea para el alumno. A modo de pista, fíjate en la matriz de correlaciones en los ejemplos presentados.</p>
-<div class="callout-caution callout callout-style-default callout-captioned">
+<p>En este caso, la primera componente principal puede interpretarse como una combinación global de nivel competitivo (ranking) y experiencia (edad), mientras que la segunda componente introduce contrastes entre edad y ranking. No obstante, esta interpretación no es única ni garantizada.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="Para recordar">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
+Para recordar
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>PCA no garantiza interpretabilidad semántica. La interpretación de las componentes debe hacerse con cautela y, siempre que sea posible, con apoyo de conocimiento del dominio deportivo.</p>
+</div>
+</div>
+<p>Proyectamos los partidos sobre las dos primeras componentes principales:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">prcomp</span>(df, <span class="at">scale =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>x[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reddim_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Cada punto representa un partido. Puntos cercanos indican partidos con perfiles similares en términos de ranking y edad de las jugadoras involucradas.</p>
+<p>Podemos mejorar el gráfico utilizando un biplot, que incorpora información de las variables originales:</p>
+<p>¿Cómo mejorar el gráfico? Un modo posible es incorporar la información de las variables utilizando la técnica del <em>biplot</em>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">biplot</span>(<span class="fu">prcomp</span>(df, <span class="at">scale =</span> <span class="cn">TRUE</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reddim_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>En este gráfico:</p>
+<p>Las flechas representan las variables originales.</p>
+<ul>
+<li><p>Su dirección y longitud indican cómo contribuyen a las componentes principales.</p></li>
+<li><p>Los partidos se distribuyen según estas combinaciones latentes.</p></li>
+</ul>
+</section>
+</section>
+<section id="interpretación-y-limitaciones" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="interpretación-y-limitaciones"><span class="header-section-number">4.2</span> Interpretación y limitaciones</h2>
+<p>Este análisis permite:</p>
+<ul>
+<li><p>Detectar patrones globales en los partidos.</p></li>
+<li><p>Identificar partidos con perfiles extremos (grandes diferencias de ranking, jugadoras muy jóvenes o muy veteranas).</p></li>
+<li><p>Reducir la complejidad visual del conjunto de datos.</p></li>
+</ul>
+<p>Sin embargo, es fundamental recordar que:</p>
+<ul>
+<li><p>PCA es una técnica no supervisada.</p></li>
+<li><p>No utiliza información sobre el resultado del partido más allá de las variables incluidas.</p></li>
+<li><p>Las componentes no representan conceptos deportivos “puros” de forma automática.</p></li>
+</ul>
+<p>Por tanto, PCA debe entenderse como una herramienta exploratoria, útil para visualizar y resumir datos, pero no como un sustituto del análisis específico del rendimiento o del conocimiento experto.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
 Pregunta
 </div>
 </div>
@@ -845,69 +891,42 @@ Pregunta
 </div>
 </div>
 </section>
-</section>
-<section id="selección-de-características" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="selección-de-características"><span class="header-section-number">4.2</span> Selección de características</h2>
-<p>En el tema <a href="eda.html"><span>Capítulo&nbsp;3</span></a> vimos como es posible evaluar la correlación entre una variable objetivo y las variables explicativas asociadas. A continuación, a modo de ejercicio, vamos a estudiar la relación existente entre la variable objetivo <code>deposit</code> y la variable <code>age</code> de la base de datos <code>bank</code>. Tratamos de responder a la pregunta de si la variable edad del cliente influye, o no, en si el cliente suscribirá (o no) un depósito a plazo.</p>
+<section id="selección-de-características" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="selección-de-características"><span class="header-section-number">4.3</span> Selección de características</h2>
+<p>En el tema <a href="eda.html" class="quarto-xref"><span>Capítulo 3</span></a> vimos como es posible evaluar la correlación entre una variable objetivo y las variables explicativas asociadas. A continuación, a modo de ejercicio, vamos a estudiar la relación existente entre la variable objetivo <code>deposit</code> y la variable <code>age</code> de la base de datos <code>bank</code>. Tratamos de responder a la pregunta de si la variable edad del cliente influye, o no, en si el cliente suscribirá (o no) un depósito a plazo.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (ggplot2)</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bank, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">log</span>(age), <span class="at">colour =</span> deposit)) <span class="sc">+</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">lwd=</span><span class="dv">2</span>, <span class="at">linetype=</span><span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="reddim_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
-</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#library (ggplot2)</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#ggplot(bank, aes(x = log(age), colour = deposit)) +</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a> <span class="co"># geom_density(lwd=2, linetype=1)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Aprentemente, no se observa una relación significativa entre ambas variables.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">=</span> bank <span class="sc">%&gt;%</span> </span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(age,deposit)<span class="sc">%&gt;%</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">log.age=</span><span class="fu">log</span>(age))</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen para los casos de depósito</span></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(deposit<span class="sc">==</span><span class="st">"yes"</span>) <span class="sc">%&gt;%</span> .<span class="sc">$</span>log.age)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  2.890   3.434   3.638   3.681   3.912   4.554 </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen para los casos de no depósito</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(deposit<span class="sc">==</span><span class="st">"no"</span>) <span class="sc">%&gt;%</span> .<span class="sc">$</span>log.age)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  2.890   3.497   3.664   3.679   3.871   4.489 </code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># df = bank %&gt;% </span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    select(age,deposit)%&gt;%</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    mutate(log.age=log(age))</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen para los casos de depósito</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">#summary(df %&gt;% filter(deposit=="yes") %&gt;% .$log.age)</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen para los casos de no depósito</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(df %&gt;% filter(deposit=="no") %&gt;% .$log.age)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Efectivamente, los valores de resumen de edad en ambas categorías de la variable respuesta son muy similares. Gráficamente, podemos comparar los boxplots.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(deposit, log.age)) <span class="sc">+</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_boxplot</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="reddim_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
-</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(df, aes(deposit, log.age)) +</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#        geom_boxplot()</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Podemos constrastar la hipótesis nula de igualdad de medias mediante un test de la T:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(log.age <span class="sc">~</span> deposit, <span class="at">data =</span> df)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    Welch Two Sample t-test
-
-data:  log.age by deposit
-t = -0.26977, df = 10053, p-value = 0.7873
-alternative hypothesis: true difference in means between group no and group yes is not equal to 0
-95 percent confidence interval:
- -0.011917888  0.009034321
-sample estimates:
- mean in group no mean in group yes 
-         3.679125          3.680566 </code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># t.test(log.age ~ deposit, data = df)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El <span class="math inline">\(p-valor\)</span> es mayor que <span class="math inline">\(0.10\)</span> por lo que no hay evidencia estadística en las observaciones en contra de la hipótesis nula. Podemos concluir, por tanto, que no existe una relación significativa (o al menos aún no la hemos localizado) entre las variables <code>deposit</code> y <code>age</code>. Podríamos, por tanto, eliminar la varible explicativa de la base de datos. De este modo se reduce la dimensionalidad del problema. Sin embargo, es una práctica peligrosa. La variable <code>age</code> podría resultar significativamente relevante cuando se controlen los efectos de otras variables dentro del futuro modelo de ML.</p>
-<div class="callout-important callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Para recordar
 </div>
 </div>
@@ -917,8 +936,8 @@ Para recordar
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
-<div id="ref-john1994irrelevant" class="csl-entry" role="doc-biblioentry">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-john1994irrelevant" class="csl-entry" role="listitem">
 John, George H, Ron Kohavi, y Karl Pfleger. 1994. <span>«Irrelevant features and the subset selection problem»</span>. En <em>Machine learning proceedings 1994</em>, 121-29. Elsevier.
 </div>
 </div>
@@ -952,12 +971,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
     }
-  });
-  clipboard.on('success', function(e) {
+    return false;
+  }
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -965,18 +987,74 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // flash "checked"
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copiada");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -986,55 +1064,320 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
   for (var i=0; i<noterefs.length; i++) {
     const ref = noterefs[i];
     tippyHover(ref, function() {
-      let href = ref.getAttribute('href');
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./eda.html" class="pagination-link">
+      <a href="./eda.html" class="pagination-link" aria-label="Análisis Exploratorio de Datos">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Análisis Exploratorio de Datos</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./aprnosup.html" class="pagination-link">
+      <a href="./aprnosup.html" class="pagination-link" aria-label="Aprendizaje no supervisado">
         <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Aprendizaje no supervisado</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

@@ -1,12 +1,13 @@
 # Técnicas de reducción de la dimensionalidad {#sec-reddim}
 
-En el complejo mundo de la ciencia de datos, nos encontramos a menudo con conjuntos de datos que abarcan una amplia variedad de variables. Estas variables, en su mayoría cuantitativas, pueden proporcionar una gran cantidad de información, pero también pueden convertirse en un desafío cuando se trata de comprender y analizar de manera efectiva los datos. La gestión de grandes conjuntos de variables puede ser abrumadora y puede llevar a problemas como la alta correlación entre ellas, dificultando la extracción de información valiosa y la visualización clara de los datos. Imagina un conjunto de datos con más de $50$ variables. Como científico de datos, has de analizar todas y cada una de ellas, así como sus posibles relaciones.
+En el análisis de datos deportivos es habitual trabajar con conjuntos de datos que incluyen **muchas variables simultáneamente**: métricas físicas (carga externa e interna), indicadores técnicos (pases, tiros, pérdidas), variables contextuales (rival, local/visitante, ritmo de juego), o descriptores derivados de tracking y sensores. Esta riqueza de información es valiosa, pero también introduce dificultades prácticas: variables altamente correlacionadas, redundancia, ruido y una complejidad que puede dificultar tanto el análisis exploratorio como la construcción de modelos fiables. No es raro encontrarse con decenas —o cientos— de variables por jugador, sesión o partido.
 
-Es en este contexto que entran en juego las "*Técnicas de Reducción de la Dimensión*". Estas técnicas son herramientas que nos permiten encontrar un equilibrio entre la riqueza de información y la simplicidad en el análisis. El objetivo principal de la reducción de la dimensión es identificar un conjunto más pequeño de variables, llamadas "*variables latentes*" o "*componentes principales*", que capturen la mayor parte de la información esencial contenida en las variables originales. Este proceso se realiza con el menor costo de información posible, lo que facilita la gestión y el análisis de datos complejos.
+En este contexto cobran especial interés las **técnicas de reducción de la dimensionalidad**, cuyo objetivo es representar los datos en un espacio de menor dimensión conservando, en la medida de lo posible, la información relevante. En términos intuitivos, se trata de sustituir un conjunto grande de variables originales por un conjunto más pequeño de **componentes** o **factores latentes** que capturen la estructura principal de variación presente en los datos. Estas técnicas permiten simplificar la representación del rendimiento o del comportamiento deportivo sin tener que ignorar por completo la complejidad del fenómeno.
 
-Las ventajas de la reducción de la dimensión son múltiples. En primer lugar, permite reducir la cantidad de información utilizada, lo que puede ser especialmente útil cuando se trabaja con grandes conjuntos de datos. Además, la eliminación de problemas de alta correlación entre variables ayuda a eliminar la redundancia en los datos y a prevenir posibles distorsiones en los resultados del análisis. Pero quizás una de las ventajas más notables es la posibilidad de visualizar los datos de manera sencilla, a menudo en solo dos dimensiones, lo que facilita la interpretación y la comunicación de resultados.
+Las ventajas en deporte son claras. En primer lugar, facilitan la **visualización** y la exploración: por ejemplo, representar perfiles de jugadores o sesiones de entrenamiento en dos o tres dimensiones para detectar agrupamientos, transiciones o valores atípicos. En segundo lugar, ayudan a mitigar problemas comunes en modelización deportiva, como la **multicolinealidad** (por ejemplo, múltiples métricas de carga que reflejan el mismo patrón subyacente) y el riesgo de sobreajuste cuando el número de variables crece respecto al número de observaciones. Además, pueden servir como etapa previa a tareas de ML como clustering, clasificación o detección de anomalías.
 
-Sin embargo, es importante mencionar una desventaja potencial de estas técnicas: la falta de **explicabilidad** de las nuevas variables. Dado que estas se construyen como combinaciones de las originales, a menudo requieren la experiencia de un experto en el dominio para su correcta interpretación. Esto significa que, si bien la reducción de la dimensión simplifica el análisis, también puede introducir cierta complejidad en la comprensión de las relaciones subyacentes entre las variables.
+Ahora bien, estas técnicas también tienen una limitación relevante en un máster orientado al deporte: la **interpretabilidad**. Los componentes reducidos suelen ser combinaciones de variables originales y, aunque pueden capturar patrones estadísticos de forma eficiente, no siempre se traducen directamente en conceptos deportivos claros (“intensidad”, “fatiga”, “control del juego”, etc.). Por ello, su uso responsable exige combinar el análisis matemático con conocimiento del dominio: interpretar los componentes, validar que tienen sentido deportivo y evitar conclusiones excesivas basadas únicamente en proyecciones en baja dimensión.
+
 
 Despliega los paneles siguientes para descrubir algunas de las técnicas más conocidas.
 
@@ -58,7 +59,7 @@ Los autoencoders son redes neuronales que se utilizan para aprender representaci
 A veces, la reducción de la dimensión se puede lograr mediante la ingeniería de características (**Feature Engineering**), donde se crean nuevas variables que resumen la información de las originales de manera más efectiva.
 :::
 
-En este tema, exploraremos en detalle las técnicas más utilizadas para la reducción de la dimensión, proporcionando ejemplos prácticos y pautas para su aplicación efectiva. Estas técnicas son esenciales para cualquier científico de datos que desee extraer conocimiento valioso de grandes conjuntos de datos y simplificar el proceso de análisis sin perder de vista la interpretación de los resultados.
+En este tema, exploraremos en detalle las técnicas más utilizadas para la reducción de la dimensión, proporcionando ejemplos prácticos y pautas para su aplicación efectiva. Estas técnicas son esenciales para cualquier analista de datos que desee extraer conocimiento valioso de grandes conjuntos de datos y simplificar el proceso de análisis sin perder de vista la interpretación de los resultados.
 
 Por tanto, podemos decir que los métodos de reducción de dimensionalidad son técnicas que se utilizan para reducir la cantidad de variables en un conjunto de datos mientras se intenta retener la información relevante. Sin embargo, existen enfoques adicionales para realizar la reducción de la dimensionalidad, que se clasifican comúnmente en tres categorías: *filter*, *wrapper* y *embedded* [@john1994irrelevant].
 
@@ -98,13 +99,11 @@ Los pasos para aplicar esta técnica sobre un conjunto de datos son:
 
 El PCA se utiliza en diversas aplicaciones, como reducción de dimensionalidad, compresión de imágenes, análisis de datos, reconocimiento de patrones, etc. Permite simplificar datos complejos mientras se retiene la mayor cantidad posible de información importante. Al seleccionar un número apropiado de componentes principales, es posible reducir la dimensionalidad de los datos sin perder significado, lo que puede mejorar la eficiencia del análisis y la visualización.
 
-### **Profundicemos un poco más**
+ **Profundicemos un poco más**
 
 El PCA busca encontrar una representación más eficiente (menor dimensión) de los datos preservando la información contenida en ellos. La idea fundamental es que **la varianza de los datos representa la cantidad de información que contienen**, y PCA rota el sistema de coordenadas para encontrar las direcciones en las que la varianza es máxima.
 
 ::: {.callout-caution title="Para recordar"}
-# Para recordar
-
 Relación entre los conceptos de varianza e información.
 :::
 
@@ -290,109 +289,142 @@ grid.arrange(p1, p2, ncol = 2)
 
 ### PCA en R
 
-Trabajemos con un ejemplo de datos en R. Este conjunto de datos contiene estadísticas, en arrestos por cada $100.000$ residentes por asalto (Assault), asesinato (Murder) y secuestro (Rape) en los $50$ Estados de USA en 1973. También se proporciona el porcentaje de la población en áreas urbanas (UrbanPop).
+Trabajemos ahora con un ejemplo de datos deportivos reales. Utilizaremos estadísticas de partidos de tenis femenino (WTA), donde cada observación corresponde a un partido, y las variables recogen información básica de las jugadoras implicadas.
+
+En concreto, consideraremos las siguientes variables cuantitativas:
+
+- `winner_rank`: ranking de la jugadora ganadora
+
+- `loser_rank`: ranking de la jugadora perdedora
+
+- `winner_age`: edad de la ganadora
+
+- `loser_age`: edad de la perdedora
+
+- `rank_diff`: diferencia de ranking entre perdedora y ganadora
+
+Nota que estas variables contienen información relevante, pero presentan escalas muy diferentes (ranking vs edad).
 
 ```{r}
-head(USArrests)
-summary(USArrests)
+# Leemos y preparamos los datos 
+
+library(tidyverse)
+
+url_matches <- "https://raw.githubusercontent.com/JeffSackmann/tennis_wta/master/wta_matches_2023.csv"
+tennis <- read_csv(url_matches, show_col_types = FALSE)
+
+df <- tennis %>%
+  select(winner_rank, loser_rank, winner_age, loser_age) %>%
+  drop_na() %>%
+  mutate(rank_diff = loser_rank - winner_rank)
+
+head(df)
+summary(df)
+
 ```
 
-Para realizar PCA sobre los datos USArrests:
+Aplicamos PCA directamente sobre las variables:
 
 ```{r}
-prcomp(USArrests)
+prcomp(df)
 ```
 
 Las *standard deviations* son los autovalores de la matriz de correlaciones, y representan la variabilidad en cada componente. A mayor valor, más relevante es la variable correspondiente a efectos de visualización. Si queremos visualizar la importancia relativa de cada componente, haremos lo siguiente:
 
 ```{r}
-plot(prcomp(USArrests))
+plot(prcomp(df))
 ```
 
 De modo numérico:
 
 ```{r}
-summary(prcomp(USArrests))
+summary(prcomp(df))
 ```
 
-Como vemos, la variabilidad de los datos se explica mayoritariamente por la primera componente principal PC1 que, tal y como se puede ver en la matriz *Rotation*, da un peso de $0.9952$ a la variable `Assault`, y pesos cercanos a cero al resto de variables. En la tabla anterior se observa que la proporción de varianza explicada por la primera componente es del $96.6\%$, es decir, es prácticamente la única relevante. Queda muy poca variabilidad para ser explicada por el resto de variable. ¿Qué está sucediendo? Si nos fijamos en los datos de USArrests, la magnitud de los valores de `Assault` es mucho mayor que la magnitud de las otras variables. Por ejemplo, en el caso de Alabama, $236$ para la variable `Assault` frente a $13.2$ de `Murder` ó $21.2$ de `Rape`. Claramente es la variable que va a tener más influencia en el resultado final, tal y como se ve en el gráfico precedente. La segunda componente más influyente es PC2, que depende de `UrbanPop`, la siguiente variable en magnitud, y así sucesivamente.
-
-¿Tiene sentido que una variable sea más influyente que otra por el mero hecho de estar medida en diferentes unidades de medida? Realmente no.¿Cómo solucionar este problema? La respuesta es la **estandarización**. Repitamos el análisis, pero estandarizando los datos:
+Observamos que la primera componente principal explica la mayor parte de la variabilidad. Si inspeccionamos la matriz de rotaciones:
 
 ```{r}
-plot(prcomp(USArrests,scale=T))
-summary(prcomp(USArrests,scale=T))
+prcomp(df)$rotation
 ```
 
-Como puede verse, con las dos primeras componentes recogemos prácticamente el $87\%$ de la variabilidad. Esto quiere decir que un gráfico de los datos de `USAarrests`, representados por las dos primeras componentes principales será suficientemente representativo.
+vemos que esta primera componente está dominada casi exclusivamente por las variables relacionadas con el ranking, mientras que las variables de edad tienen un peso mucho menor.
+
+Esto no es sorprendente: los valores de `winner_rank` y `loser_rank` pueden alcanzar varios cientos, mientras que la edad suele oscilar en un rango mucho más reducido (aproximadamente entre 15 y 40 años). Como consecuencia, PCA prioriza las variables con mayor magnitud numérica.
+
+¿Tiene sentido que una variable sea más influyente únicamente por estar medida en una escala mayor? Desde el punto de vista del análisis deportivo, no necesariamente.
+
+
+Para evitar este efecto, repetimos el análisis estandarizando las variables:
+```{r}
+plot(prcomp(df, scale = TRUE))
+summary(prcomp(df, scale = TRUE))
+
+```
+
+Ahora observamos que:
+
+- La variabilidad se reparte de forma más equilibrada entre las componentes.
+
+- Las dos primeras componentes explican una proporción sustancial de la variabilidad total.
+
+- El análisis ya no está dominado exclusivamente por el ranking.
+
 
 Antes de ir al gráfico, analicemos la matriz de rotaciones, en busca de interpretación semántica para las componentes principales:
 
 ```{r}
-prcomp(USArrests,scale=T)
+prcomp(df, scale = TRUE)$rotation
 ```
 
-PC1 asigna pesos, todos del mismo signo a las variables. Podemos comprobar que viene a representar un promedio ponderado de las variables originales. Es decir, es una medida resumen que permite ordenar, en dicha componente, el comportamiento de los $50$ estados desde el punto de vista de los delitos cometidos. Al concentrarnos en la segunda componente principal, los estados serían ordenados en cuanto a su población urbana en un sentido, ponderando en sentido contrario el número de asesinatos. En PC3, el orden viene principalmente dado por los secuestros.
+En este caso, la primera componente principal puede interpretarse como una combinación global de nivel competitivo (ranking) y experiencia (edad), mientras que la segunda componente introduce contrastes entre edad y ranking. No obstante, esta interpretación no es única ni garantizada.
 
-En cualquier caso, debemos tener presente que no hay ninguna garantía de interpretabilidad en un análisis PCA.
+::: {.callout-important title="Para recordar"}
+PCA no garantiza interpretabilidad semántica. La interpretación de las componentes debe hacerse con cautela y, siempre que sea posible, con apoyo de conocimiento del dominio deportivo.
+:::
 
-Dibujamos los datos proyectados sobre las dos primeras componentes:
+Proyectamos los partidos sobre las dos primeras componentes principales:
 
 ```{r}
-plot(prcomp(USArrests,scale=T)$x[,1:2])
+plot(prcomp(df, scale = TRUE)$x[, 1:2])
 ```
 
-Sería deseable poder ver los nombres de los estados, en lugar de simples puntos. Para ello:
+Cada punto representa un partido. Puntos cercanos indican partidos con perfiles similares en términos de ranking y edad de las jugadoras involucradas.
 
-```{r}
-plot(prcomp(USArrests,scale=T)$x[,1:2],type="n")
-text(prcomp(USArrests,scale=T)$x[,1:2],rownames(USArrests))
-```
-
-Puntos cercanos en el mapa indican comportamiento/perfil similar en cuanto a los delitos cometidos. Del gráfico podemos inferir que Florida, Nevada y California son tres puntos extremos en cuanto al comportamiento criminal. Pero, ¿en qué sentido? ¿muy baja o muy alta criminalidad? En este caso particular, la respuesta es muy alta, dado que en la matriz de rotación todos los pesos de la primera componente principal son negativos, luego a mayor valor en las variables originales, situación más a la izquierda en PC1. En cuanto a PC2, tenemos comportamientos extremos por ejemplo en Hawai por abajo y en Mississippi y North Carolina por arriba. En el primer caso hay mucha población urbana y pocos asesinatos. En el segundo, al contrario.
+Podemos mejorar el gráfico utilizando un biplot, que incorpora información de las variables originales:
 
 ¿Cómo mejorar el gráfico? Un modo posible es incorporar la información de las variables utilizando la técnica del *biplot*.
 
 ```{r}
-biplot(prcomp(USArrests,scale=T)) 
+biplot(prcomp(df, scale = TRUE))
 ```
 
-Como vemos, la primera componente viene a situarse donde se situaría el promedio de las cuatro variables. Los estados casi se ordenan en la segunda componente por `UrbanPop` en un sentido, y por `Murder` en el otro, como ya hemos deducido/comprobado.
+En este gráfico:
 
-A continuación presentamos el mismo análisis para las variables continuas de la base de datos `bank`:
+Las flechas representan las variables originales.
 
-```{r}
-#| label: peng1
-#| include: true
-#| warning: false
-#| echo: true
-#| code-fold: true
-#| code-summary: "Click para ver el código"
-library (dplyr)
+- Su dirección y longitud indican cómo contribuyen a las componentes principales.
 
-bank = read.csv('https://raw.githubusercontent.com/rafiag/DTI2020/main/data/bank.csv')
-df= bank %>% 
-      filter(balance>0 & previous>0 & pdays>0) %>% 
-      mutate( log.balance=log(balance),
-              log.age=log(age),
-              log.campaign=log(campaign),
-              log.previous=log(previous),
-              log.pdays = log(pdays),
-              log.duration=log(duration)) %>%
-      select(log.balance,log.age,log.campaign,log.duration,log.previous,log.pdays)
+- Los partidos se distribuyen según estas combinaciones latentes.
 
-# No escalado
-prcomp(df)
-summary(prcomp(df))
-biplot(prcomp(df))
+## Interpretación y limitaciones
 
-# Escalamos los datos:
-prcomp(df, scale=T)
-summary(prcomp(df, scale=T))
-biplot(prcomp(df, scale=T))
-```
+Este análisis permite:
 
-Dejamos la interpretación de los resultados como tarea para el alumno. A modo de pista, fíjate en la matriz de correlaciones en los ejemplos presentados.
+- Detectar patrones globales en los partidos.
+
+- Identificar partidos con perfiles extremos (grandes diferencias de ranking, jugadoras muy jóvenes o muy veteranas).
+
+- Reducir la complejidad visual del conjunto de datos.
+
+Sin embargo, es fundamental recordar que:
+
+- PCA es una técnica no supervisada.
+
+- No utiliza información sobre el resultado del partido más allá de las variables incluidas.
+
+- Las componentes no representan conceptos deportivos “puros” de forma automática.
+
+Por tanto, PCA debe entenderse como una herramienta exploratoria, útil para visualizar y resumir datos, pero no como un sustituto del análisis específico del rendimiento o del conocimiento experto.
 
 ::: callout-caution
 ## Pregunta
@@ -409,9 +441,9 @@ En el tema @sec-eda vimos como es posible evaluar la correlación entre una vari
 #| warning: false
 #| echo: true
 
-library (ggplot2)
-ggplot(bank, aes(x = log(age), colour = deposit)) +
-  geom_density(lwd=2, linetype=1)
+#library (ggplot2)
+#ggplot(bank, aes(x = log(age), colour = deposit)) +
+ # geom_density(lwd=2, linetype=1)
 
 ```
 
@@ -421,15 +453,15 @@ Aprentemente, no se observa una relación significativa entre ambas variables.
 #| include: true
 #| warning: false
 #| echo: true
-df = bank %>% 
-      select(age,deposit)%>%
-      mutate(log.age=log(age))
+# df = bank %>% 
+  #    select(age,deposit)%>%
+  #    mutate(log.age=log(age))
 
 # Resumen para los casos de depósito
-summary(df %>% filter(deposit=="yes") %>% .$log.age)
+#summary(df %>% filter(deposit=="yes") %>% .$log.age)
 
 # Resumen para los casos de no depósito
-summary(df %>% filter(deposit=="no") %>% .$log.age)
+# summary(df %>% filter(deposit=="no") %>% .$log.age)
 
 ```
 
@@ -439,8 +471,8 @@ Efectivamente, los valores de resumen de edad en ambas categorías de la variabl
 #| include: true
 #| warning: false
 #| echo: true
-ggplot(df, aes(deposit, log.age)) +
-        geom_boxplot()
+# ggplot(df, aes(deposit, log.age)) +
+#        geom_boxplot()
 
 ```
 
@@ -450,7 +482,7 @@ Podemos constrastar la hipótesis nula de igualdad de medias mediante un test de
 #| include: true
 #| warning: false
 #| echo: true
-t.test(log.age ~ deposit, data = df)
+# t.test(log.age ~ deposit, data = df)
 ```
 
 El $p-valor$ es mayor que $0.10$ por lo que no hay evidencia estadística en las observaciones en contra de la hipótesis nula. Podemos concluir, por tanto, que no existe una relación significativa (o al menos aún no la hemos localizado) entre las variables `deposit` y `age`. Podríamos, por tanto, eliminar la varible explicativa de la base de datos. De este modo se reduce la dimensionalidad del problema. Sin embargo, es una práctica peligrosa. La variable `age` podría resultar significativamente relevante cuando se controlen los efectos de otras variables dentro del futuro modelo de ML.
