@@ -434,61 +434,102 @@ Por tanto, PCA debe entenderse como una herramienta exploratoria, útil para vis
 
 ## Selección de características
 
-En el tema @sec-eda vimos como es posible evaluar la correlación entre una variable objetivo y las variables explicativas asociadas. A continuación, a modo de ejercicio, vamos a estudiar la relación existente entre la variable objetivo `deposit` y la variable `age` de la base de datos `bank`. Tratamos de responder a la pregunta de si la variable edad del cliente influye, o no, en si el cliente suscribirá (o no) un depósito a plazo.
+En el tema @sec-eda vimos cómo es posible evaluar la relación entre una variable objetivo y las variables explicativas asociadas, utilizando herramientas gráficas y contrastes estadísticos simples. En este apartado, a modo de ejercicio, vamos a estudiar la relación existente entre la variable objetivo `winner_is_better_rank` y la variable `winner_age` en un conjunto de datos de partidos de tenis femenino (WTA).
+
+La pregunta que tratamos de responder es la siguiente:
+
+- ¿Influye la edad de la jugadora ganadora en que el resultado del partido sea “esperable” (gana la mejor rankeada) o una sorpresa (upset)?
+
+Recordemos que:
+
+- `winner_is_better_rank = 1` si la ganadora tenía mejor ranking que la perdedora,
+
+- `winner_is_better_rank = 0` si ganó la jugadora peor rankeada.
 
 ```{r}
 #| include: true
 #| warning: false
 #| echo: true
 
-#library (ggplot2)
-#ggplot(bank, aes(x = log(age), colour = deposit)) +
- # geom_density(lwd=2, linetype=1)
+library(tidyverse)
+df <- tennis %>%
+select(winner_rank, loser_rank, winner_age) %>%
+drop_na() %>%
+mutate(
+winner_is_better_rank = as.integer(winner_rank < loser_rank),
+log_winner_age = log(winner_age)
+)
+
+ggplot(df, aes(x = log_winner_age, colour = factor(winner_is_better_rank))) +
+geom_density(lwd = 1) +
+labs(colour = "winner_is_better_rank")
 
 ```
 
-Aprentemente, no se observa una relación significativa entre ambas variables.
+Aparentemente, **no se observa una separación clara** entre ambas distribuciones. La edad (en escala logarítmica) de la ganadora parece distribuirse de forma muy similar tanto en partidos “esperables” como en upsets.
 
 ```{r}
 #| include: true
 #| warning: false
 #| echo: true
-# df = bank %>% 
-  #    select(age,deposit)%>%
-  #    mutate(log.age=log(age))
 
-# Resumen para los casos de depósito
-#summary(df %>% filter(deposit=="yes") %>% .$log.age)
+# Resumen para partidos donde gana la mejor rankeada
 
-# Resumen para los casos de no depósito
-# summary(df %>% filter(deposit=="no") %>% .$log.age)
+summary(df %>% filter(winner_is_better_rank == 1) %>% pull(log_winner_age))
+
+# Resumen para partidos con upset
+
+summary(df %>% filter(winner_is_better_rank == 0) %>% pull(log_winner_age))
+
 
 ```
 
-Efectivamente, los valores de resumen de edad en ambas categorías de la variable respuesta son muy similares. Gráficamente, podemos comparar los boxplots.
+Los estadísticos resumen (media, mediana, cuartiles) son muy similares en ambos grupos.
 
 ```{r}
 #| include: true
 #| warning: false
 #| echo: true
-# ggplot(df, aes(deposit, log.age)) +
-#        geom_boxplot()
+
+ggplot(df, aes(x = factor(winner_is_better_rank), y = log_winner_age)) +
+geom_boxplot() +
+xlab("winner_is_better_rank") +
+ylab("log(winner_age)")
+
 
 ```
 
-Podemos constrastar la hipótesis nula de igualdad de medias mediante un test de la T:
+Gráficamente, tampoco se aprecian diferencias relevantes entre las dos categorías de la variable respuesta.
 
+Podemos contrastar formalmente la hipótesis nula de igualdad de medias mediante un test t:
 ```{r}
 #| include: true
 #| warning: false
 #| echo: true
-# t.test(log.age ~ deposit, data = df)
+
+t.test(log_winner_age ~ winner_is_better_rank, data = df)
 ```
 
-El $p-valor$ es mayor que $0.10$ por lo que no hay evidencia estadística en las observaciones en contra de la hipótesis nula. Podemos concluir, por tanto, que no existe una relación significativa (o al menos aún no la hemos localizado) entre las variables `deposit` y `age`. Podríamos, por tanto, eliminar la varible explicativa de la base de datos. De este modo se reduce la dimensionalidad del problema. Sin embargo, es una práctica peligrosa. La variable `age` podría resultar significativamente relevante cuando se controlen los efectos de otras variables dentro del futuro modelo de ML.
+El p-valor es claramente inferior a los niveles habituales de significación ($0.05$ o $0.10$), por lo que hay evidencia estadística para rechazar la hipótesis nula de igualdad de medias.
+
+Podemos concluir, por tanto, que desde un punto de vista merametne estadístico sí se observa una relación significativa, al menos de forma univariante, entre la edad de la ganadora y la probabilidad de que el partido sea un upset o un resultado esperable.
+
+Sin embargo, a la vista del análisis gráfico, podría ser razonable eliminar la variable `winner_age` para reducir la dimensionalidad del problema. Esta decisión debe tomarse con cautela.
 
 ::: callout-important
 ## Para recordar
 
 Eliminar variables explicativas en etapas tempranas del análisis para reducir la dimensionalidad del problema, conlleva el riesgo de pérdida de información que podría ser útil en etapas posteriores.
+
+En deporte, una variable puede no ser significativa de forma aislada, pero resultar clave cuando se combina con otras (por ejemplo, edad + ranking + superficie).
 :::
+
+En particular, en tenis es plausible que la edad:
+
+- interactúe con el nivel competitivo (ranking),
+
+- tenga efectos distintos según la superficie,
+
+- o sea relevante solo en determinados rangos (jugadoras muy jóvenes o veteranas).
+
+Por tanto, este tipo de análisis debe entenderse como una herramienta exploratoria, no como un criterio definitivo de selección de variables.

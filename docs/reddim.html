@@ -893,34 +893,89 @@ Pregunta
 </section>
 <section id="selección-de-características" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="selección-de-características"><span class="header-section-number">4.3</span> Selección de características</h2>
-<p>En el tema <a href="eda.html" class="quarto-xref"><span>Capítulo 3</span></a> vimos como es posible evaluar la correlación entre una variable objetivo y las variables explicativas asociadas. A continuación, a modo de ejercicio, vamos a estudiar la relación existente entre la variable objetivo <code>deposit</code> y la variable <code>age</code> de la base de datos <code>bank</code>. Tratamos de responder a la pregunta de si la variable edad del cliente influye, o no, en si el cliente suscribirá (o no) un depósito a plazo.</p>
+<p>En el tema <a href="eda.html" class="quarto-xref"><span>Capítulo 3</span></a> vimos cómo es posible evaluar la relación entre una variable objetivo y las variables explicativas asociadas, utilizando herramientas gráficas y contrastes estadísticos simples. En este apartado, a modo de ejercicio, vamos a estudiar la relación existente entre la variable objetivo <code>winner_is_better_rank</code> y la variable <code>winner_age</code> en un conjunto de datos de partidos de tenis femenino (WTA).</p>
+<p>La pregunta que tratamos de responder es la siguiente:</p>
+<ul>
+<li>¿Influye la edad de la jugadora ganadora en que el resultado del partido sea “esperable” (gana la mejor rankeada) o una sorpresa (upset)?</li>
+</ul>
+<p>Recordemos que:</p>
+<ul>
+<li><p><code>winner_is_better_rank = 1</code> si la ganadora tenía mejor ranking que la perdedora,</p></li>
+<li><p><code>winner_is_better_rank = 0</code> si ganó la jugadora peor rankeada.</p></li>
+</ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#library (ggplot2)</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#ggplot(bank, aes(x = log(age), colour = deposit)) +</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a> <span class="co"># geom_density(lwd=2, linetype=1)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> tennis <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(winner_rank, loser_rank, winner_age) <span class="sc">%&gt;%</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">drop_na</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="at">winner_is_better_rank =</span> <span class="fu">as.integer</span>(winner_rank <span class="sc">&lt;</span> loser_rank),</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="at">log_winner_age =</span> <span class="fu">log</span>(winner_age)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> log_winner_age, <span class="at">colour =</span> <span class="fu">factor</span>(winner_is_better_rank))) <span class="sc">+</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_density</span>(<span class="at">lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">"winner_is_better_rank"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reddim_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
-<p>Aprentemente, no se observa una relación significativa entre ambas variables.</p>
+</div>
+</div>
+<p>Aparentemente, <strong>no se observa una separación clara</strong> entre ambas distribuciones. La edad (en escala logarítmica) de la ganadora parece distribuirse de forma muy similar tanto en partidos “esperables” como en upsets.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># df = bank %&gt;% </span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    select(age,deposit)%&gt;%</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#    mutate(log.age=log(age))</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen para los casos de depósito</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">#summary(df %&gt;% filter(deposit=="yes") %&gt;% .$log.age)</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen para los casos de no depósito</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(df %&gt;% filter(deposit=="no") %&gt;% .$log.age)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen para partidos donde gana la mejor rankeada</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(winner_is_better_rank <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(log_winner_age))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  2.785   3.150   3.270   3.256   3.364   3.643 </code></pre>
 </div>
-<p>Efectivamente, los valores de resumen de edad en ambas categorías de la variable respuesta son muy similares. Gráficamente, podemos comparar los boxplots.</p>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumen para partidos con upset</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(winner_is_better_rank <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(log_winner_age))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  2.766   3.105   3.246   3.237   3.357   3.764 </code></pre>
+</div>
+</div>
+<p>Los estadísticos resumen (media, mediana, cuartiles) son muy similares en ambos grupos.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(df, aes(deposit, log.age)) +</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#        geom_boxplot()</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(winner_is_better_rank), <span class="at">y =</span> log_winner_age)) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">xlab</span>(<span class="st">"winner_is_better_rank"</span>) <span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ylab</span>(<span class="st">"log(winner_age)"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reddim_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
-<p>Podemos constrastar la hipótesis nula de igualdad de medias mediante un test de la T:</p>
+</div>
+</div>
+<p>Gráficamente, tampoco se aprecian diferencias relevantes entre las dos categorías de la variable respuesta.</p>
+<p>Podemos contrastar formalmente la hipótesis nula de igualdad de medias mediante un test t:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># t.test(log.age ~ deposit, data = df)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(log_winner_age <span class="sc">~</span> winner_is_better_rank, <span class="at">data =</span> df)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  log_winner_age by winner_is_better_rank
+t = -2.896, df = 1830.4, p-value = 0.003824
+alternative hypothesis: true difference in means between group 0 and group 1 is not equal to 0
+95 percent confidence interval:
+ -0.032314362 -0.006218607
+sample estimates:
+mean in group 0 mean in group 1 
+       3.237151        3.256417 </code></pre>
 </div>
-<p>El <span class="math inline">\(p-valor\)</span> es mayor que <span class="math inline">\(0.10\)</span> por lo que no hay evidencia estadística en las observaciones en contra de la hipótesis nula. Podemos concluir, por tanto, que no existe una relación significativa (o al menos aún no la hemos localizado) entre las variables <code>deposit</code> y <code>age</code>. Podríamos, por tanto, eliminar la varible explicativa de la base de datos. De este modo se reduce la dimensionalidad del problema. Sin embargo, es una práctica peligrosa. La variable <code>age</code> podría resultar significativamente relevante cuando se controlen los efectos de otras variables dentro del futuro modelo de ML.</p>
+</div>
+<p>El p-valor es claramente inferior a los niveles habituales de significación (<span class="math inline">\(0.05\)</span> o <span class="math inline">\(0.10\)</span>), por lo que hay evidencia estadística para rechazar la hipótesis nula de igualdad de medias.</p>
+<p>Podemos concluir, por tanto, que desde un punto de vista merametne estadístico sí se observa una relación significativa, al menos de forma univariante, entre la edad de la ganadora y la probabilidad de que el partido sea un upset o un resultado esperable.</p>
+<p>Sin embargo, a la vista del análisis gráfico, podría ser razonable eliminar la variable <code>winner_age</code> para reducir la dimensionalidad del problema. Esta decisión debe tomarse con cautela.</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -932,8 +987,16 @@ Para recordar
 </div>
 <div class="callout-body-container callout-body">
 <p>Eliminar variables explicativas en etapas tempranas del análisis para reducir la dimensionalidad del problema, conlleva el riesgo de pérdida de información que podría ser útil en etapas posteriores.</p>
+<p>En deporte, una variable puede no ser significativa de forma aislada, pero resultar clave cuando se combina con otras (por ejemplo, edad + ranking + superficie).</p>
 </div>
 </div>
+<p>En particular, en tenis es plausible que la edad:</p>
+<ul>
+<li><p>interactúe con el nivel competitivo (ranking),</p></li>
+<li><p>tenga efectos distintos según la superficie,</p></li>
+<li><p>o sea relevante solo en determinados rangos (jugadoras muy jóvenes o veteranas).</p></li>
+</ul>
+<p>Por tanto, este tipo de análisis debe entenderse como una herramienta exploratoria, no como un criterio definitivo de selección de variables.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
