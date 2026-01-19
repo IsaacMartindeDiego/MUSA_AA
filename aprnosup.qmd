@@ -1,46 +1,47 @@
 # Aprendizaje no supervisado {#sec-aprnosup}
 
-Los modelos de aprendizaje no supervisado aparecen cuando no se dispone de una etiqueta sobre los datos en contraposición al aprendizaje supervisado donde sí existe dicha etiqueta (ver @sec-intro). Por lo tanto, en aprendizaje no supervisado no hay clases que aprender. En este caso el objetivo de estos modelos no será construir un modelo de clasificación capaz de separar las observaciones según unas clases predeterminadas.
+En el análisis de datos deportivos es muy habitual enfrentarse a conjuntos de datos **sin una etiqueta clara o única**. A diferencia del aprendizaje supervisado, donde se dispone de una variable objetivo bien definida (por ejemplo, ganar/perder, lesión sí/no, victoria/derrota), en muchos problemas reales del deporte **no existe una “respuesta correcta” previa**. En estos casos entran en juego los modelos de **aprendizaje no supervisado**.
+
+El aprendizaje no supervisado se centra en descubrir estructura, patrones o regularidades en los datos a partir de medidas de similitud entre observaciones, sin necesidad de clases predefinidas. En el contexto deportivo, esto permite, por ejemplo, identificar perfiles de jugadores, tipologías de acciones, estilos de juego, patrones de carga de entrenamiento o comportamientos tácticos recurrentes, sin imponer categorías a priori.
 
 ::: {.callout-important title="Para recordar"}
-El objetivo de los algoritmos de agrupamiento es **particionar** el conjunto de datos en grupos de observaciones, donde cada observación se parezca lo más posible a las otras observaciones de su mismo grupo y lo menos posible a las otras observaciones de los otros grupos.
+El objetivo de los algoritmos de agrupamiento es **particionar** el conjunto de datos en grupos de observaciones, de forma que las observaciones dentro de un mismo grupo sean lo más similares posible entre sí, y lo más diferentes posible de las observaciones de otros grupos, según una medida de similitud definida.
 :::
 
-Estos grupos reciben el nombre de conglomerados o clústeres.
+A estos grupos se les denomina **clústeres** o **conglomerados**. La idea fundamental del clustering es que dos observaciones que comparten un clúster representan comportamientos deportivos similares, mientras que observaciones en clústeres distintos representan comportamientos claramente diferenciables.
 
-La idea fundamental de los algoritmos de agrupamiento es que los puntos dentro de un mismo clúster sean muy similares (respecto a alguna medida de similitud) y que los puntos en diferentes clústeres sean diferentes.
+En deporte, las técnicas de agrupamiento se utilizan, entre otros fines, para:
 
-Las técnicas de agrupamiento se emplean para segmentación del mercado, para visualización, para la detección de anomalías, para la imputación de valores faltantes, para la compresión de datos, etc. Los algoritmos de agrupamiento permiten obtener una visión de la complejidad de la tarea de clasificación.
+* segmentar jugadores según su **perfil de rendimiento**,
+* identificar **estilos de juego** en equipos o deportistas individuales,
+* detectar **anomalías** (rendimientos atípicos, cargas inusuales, posibles errores de medición),
+* reducir la complejidad de grandes volúmenes de datos procedentes de tracking o sensores,
+* apoyar procesos posteriores de modelización supervisada.
 
-El clustering se encuadra dentro del aprendizaje basado en similitud o semejanza (*similarity-based clustering*).
+El clustering se encuadra dentro del aprendizaje basado en similitud (*similarity-based learning*), y puede proporcionar una primera visión de la **estructura latente** de los datos antes de formular hipótesis más concretas o definir variables objetivo.
 
 ::: {.callout-caution title="Atención"}
-En ocasiones se recomienda comenzar el sistema de ML con un algoritmo de agrupamiento, incluso cuando tengamos etiquetas y el problema pudiera plantearse como un problema de aprendizaje supervisado.
+En muchos proyectos de analítica deportiva es recomendable comenzar con técnicas de agrupamiento, incluso cuando posteriormente se disponga de etiquetas y el problema pueda abordarse mediante aprendizaje supervisado.
 :::
 
-Podéis encontrar una amplia revisión de los algoritmos de agrupamiento en [@xu2015comprehensive], siendo los más conocidos:
+Desde el punto de vista metodológico, existe una amplia variedad de algoritmos de agrupamiento. Una revisión detallada puede encontrarse en [@xu2015comprehensive]. Entre los más utilizados destacan:
 
--   los basados en **centroides**, como por ejemplo el algoritmo de las *k-medias*
+* los métodos basados en **centroides**, como el algoritmo de las *k-medias*, habituales en la segmentación de jugadores;
+* los métodos basados en **conectividad**, como el *agrupamiento jerárquico*, útiles para explorar relaciones anidadas entre perfiles;
+* los métodos basados en **densidad**, como *DBSCAN*, especialmente relevantes para la detección de comportamientos atípicos o eventos raros.
 
--   los basados en **conectividad**, como por ejemplo el *agrupamiento jerárquico*
-
--   los basados en **densidad**, siendo el más conocido de todos el algoritmo *DBSCAN*.
-
-En ocasiones los algoritmos de agrupamiento se clasifican en agrupamiento jerárquico y agrupamiento no jerárquico.
+En ocasiones, los algoritmos de agrupamiento se clasifican de forma general en **jerárquicos** y **no jerárquicos**.
 
 ::: {.callout-note collapse="true" title="Agrupamiento jerárquico"}
-## Agrupamiento jerárquico
 
-El agrupamiento jerárquico tiene la particularidad de que encuentra grupos **anidados** de clústeres. Es decir, cuando una observación forma parte de un clúster, no lo abandona, pudiéndose unir el clúster a otros clústeres en etapas posteriores.
+El agrupamiento jerárquico genera una estructura de clústeres **anidados**, donde las observaciones se van agrupando progresivamente. Una vez que una observación se integra en un clúster, no lo abandona, sino que este clúster puede unirse a otros en niveles superiores. En deporte, este enfoque resulta útil para explorar jerarquías de perfiles o estilos.
 :::
 
 ::: {.callout-note collapse="true" title="Agrupamiento no jerárquico"}
-## Agrupamiento no jerárquico
-
-Por contra, el agrupamiento no jerárquico genera una clasificación mediante la partición del conjunto de datos, obteniendo un conjunto de clústeres **no superpuestos** que no tienen relaciones jerárquicas entre sí.
+El agrupamiento no jerárquico produce una partición directa del conjunto de datos en clústeres **no superpuestos**, sin relaciones jerárquicas entre ellos. Este enfoque es habitual cuando se desea una segmentación clara y operativa, por ejemplo, para clasificar jugadores en perfiles funcionales bien definidos.
 :::
 
-El agrupamiento puede ser una herramienta muy útil para el análisis de datos en un entorno no supervisado. Sin embargo, hay una serie de problemas que surgen al realizar el clustering. En este tema del curso vamos a repasar algunas de las propiedades y algunos de los problemas del clustering.
+El aprendizaje no supervisado es una herramienta poderosa, pero también presenta desafíos importantes: la elección de la medida de similitud, el número de clústeres, la estabilidad de las soluciones y, especialmente en deporte, la **interpretación semántica** de los grupos obtenidos. A lo largo de este tema analizaremos las principales técnicas de clustering, sus propiedades y sus limitaciones, siempre desde una perspectiva crítica y aplicada al análisis de datos deportivos.
 
 ## Aprendizaje basado en semejanza
 
@@ -217,8 +218,6 @@ El clustering no jerárquico es una técnica de agrupamiento que tiene como obje
 Para aplicar este método, es necesario especificar de antemano el número de clusters $K$, asegurando que este valor sea menor que el número total de observaciones ($K < n$). Cada cluster se etiqueta con un entero $k \in {1, \dots, K}$ y cada observación $i \in {1, \dots, n}$ se asigna de forma exclusiva a uno de los clusters.
 
 ::: {.callout-tip title="Por amor al conocimiento"}
-## Por amor al conocimiento
-
 ¿Crees que solo se pueden lograr particiones en las que cada punto pertenece únicamente a un cluster? Te animamos a investigar un poco sobre la versión *fuzzy* del clustering.
 :::
 
@@ -358,63 +357,122 @@ Estos algoritmos son **no-jerárquicos**, pues una observación puede cambiar de
 
 ### $k$-medias en R
 
-Para ver cómo funciona el algoritmo de las $k$ medias en R, vamos a emplear los datos de arrestos en USA, vistos en etapas anteriores del curso:
+Para ilustrar el funcionamiento del algoritmo de las $k-medias$ en R, vamos a emplear datos reales de partidos de tenis femenino (WTA). En este caso, cada observación corresponde a un partido, y las variables describen características básicas de las jugadoras implicadas. El objetivo del análisis no es predecir un resultado, sino explorar si existen perfiles diferenciados de partidos en función de estas variables.
+
+Trabajaremos con las siguientes variables cuantitativas:
+
+- winner_rank: ranking de la ganadora
+
+- loser_rank: ranking de la perdedora
+
+- winner_age: edad de la ganadora
+
+- loser_age: edad de la perdedora
+
+- winner_rank_points
+
+- loser_rank_points
+
+Cargamos y preparamos los datos:
 
 ```{r}
-library(tidyverse)  #  manipilación de datos
-library(cluster)    # algoritmos de clustering 
-library(factoextra) # algoritmos de clustering & visualización
+library(tidyverse)   # manipulación de datos
+library(cluster)     # algoritmos de clustering
+library(factoextra)  # clustering y visualización
+url_matches <- "https://raw.githubusercontent.com/JeffSackmann/tennis_wta/master/wta_matches_2023.csv"
+tennis <- read_csv(url_matches, show_col_types = FALSE)
 
-head(USArrests)
-df <- USArrests
-
-# eliminamos valores faltantes
-df <- na.omit(df)
-
-# escalado de todas las variables
-df <- scale(df)
-
+df <- tennis %>%
+  select(winner_rank, 
+         loser_rank, 
+         winner_age, 
+         loser_age,
+         winner_rank_points,
+         loser_rank_points,w_1stWon,l_1stWon)%>%
+  drop_na() 
 head(df)
+
+
+
 ```
 
-En primer lugar vamos a calcular la distancia Euclídea entre las observaciones de la base de datos. En R es sencillo calcular y visualizar la matriz de distancias utilizando las funciones `get_dist` y `fviz_dist` del paquete `factoextra` de R. La matriz de distancias se muestra a continuación. Esto empieza a ilustrar qué estados tienen grandes disimilitudes (rojo) frente a los que parecen ser bastante similares (verde azulado).
+
+Como ocurre habitualmente en deporte, las variables están medidas en escalas muy diferentes (ranking frente a edad). Por ello, antes de aplicar $k-medias$ es imprescindible escalar las variables.
 
 ```{r}
+# escalado de todas las variables
+df_scaled <- scale(df)
 
-distance <- get_dist(df)
-fviz_dist(distance, gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"))
+head(df_scaled)
 ```
+
+El algoritmo de $k-medias$ se basa en la distancia entre observaciones. En este ejemplo utilizamos la distancia Euclídea. Podemos calcular y visualizar la matriz de distancias con ayuda del paquete `factoextra`:
+
+```{r}
+df_scaled2 = df_scaled[sample(1:dim(df)[1],300),]
+distance <- get_dist(df_scaled2)
+fviz_dist(distance,
+          gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"))
+
+```
+
+Este gráfico comienza a mostrar qué partidos son más similares entre sí (colores fríos) y cuáles presentan perfiles claramente distintos (colores cálidos), en función de ranking y edad de las jugadoras.
+
 
 Podemos aplicar el algoritmo de las $k$-medias con $k=2$ sin más que llamar a la función `kmeans` tal y como sigue:
 
 ```{r}
-k2 <- kmeans(df, centers = 2, nstart = 25)
+k2 <- kmeans(df_scaled2, centers = 2, nstart = 25)
 str(k2)
+
 ```
 
 ::: callout-caution
 # Tarea
 
 ¿Qué significa `nstart=25` en la anterior llamada a `kmeans`?
+(Pista: tiene que ver con la estabilidad de la solución).
+
 :::
 
-Si imprimimos los resultados veremos que la técnica de agrupaciones dió lugar a $2$ conglomerados de $30$ y $20$ observaciones cada uno. Vemos los centros de los conglomerados (medias) para los dos grupos en las cuatro variables (`Murder`, `Assault`, `UrbanPop`, `Rape`). También obtenemos la asignación de conglomerados para cada observación (es decir, Alabama se asignó al conglomerado $2$, Arkansas se asignó al conglomerado $1$, etc.).
+Si imprimimos los resultados observamos que el algoritmo ha dividido los partidos en dos conglomerados, cada uno caracterizado por un centro (media) en las variables escaladas. Estos centros representan perfiles promedio de partido en cada clúster, no partidos reales concretos.
 
 ```{r}
 k2 
 ```
 
-También podemos ver nuestros resultados utilizando `fviz_cluster`. Esto proporciona una buena visualización de los clusters. Si hay más de dos dimensiones (variables) `fviz_cluster` realizará un análisis de componentes principales (ver @sec-reddim) y trazará los puntos de datos de acuerdo con los dos primeros componentes principales que explican la mayor parte de la varianza.
+Podemos representar gráficamente los resultados utilizando fviz_cluster. Dado que el conjunto de datos tiene más de dos variables, la función realiza internamente un PCA y proyecta los datos sobre las dos primeras componentes principales (ver @sec-reddim).
 
 ```{r}
-fviz_cluster(k2, data = df)
+fviz_cluster(k2, data = df_scaled2)
 ```
 
 ::: callout-caution
 # Tarea
 
-¿Qué información estamos perdiendo al representar únicamente dos dimensiones del conjunto de datos? (Repasar el capítulo @sec-reddim)
+¿Qué información estamos perdiendo al representar únicamente dos dimensiones del conjunto de datos?
+(Repasa el capítulo @sec-reddim sobre reducción de la dimensionalidad).
 :::
+
+**Interpretación en el dominio deportivo**
+
+En el ejemplo anterior, los clústeres pueden interpretarse, de forma exploratoria, como tipologías de partidos, por ejemplo:
+
+- partidos con grandes diferencias de ranking frente a partidos más equilibrados,
+
+- partidos protagonizados por jugadoras jóvenes frente a jugadoras más veteranas,
+
+- combinaciones de ambos factores.
+
+No obstante, es importante subrayar que:
+
+- $k-medias$ no utiliza información del resultado más allá de las variables incluidas,
+
+- los clústeres no tienen un significado deportivo “intrínseco”,
+
+- la interpretación requiere siempre conocimiento del dominio.
+
+Este tipo de análisis resulta especialmente útil como paso previo a tareas más complejas, como la segmentación de jugadoras, el análisis de estilos de juego o la construcción de modelos supervisados.
 
 ### Número óptimo de clústeres
 
@@ -436,16 +494,16 @@ Recordemos que la idea básica de los métodos de división en clústeres, como 
 # Reproducible
 set.seed(123)
 
-fviz_nbclust(df, kmeans, method = "wss")
+fviz_nbclust(df_scaled2, kmeans, method = "wss")
 
 ```
 
 En este caso parece que $4$ es una buena elección para el número óptimo de clusters. De modo qué:
 
 ```{r}
-k4 <- kmeans(df, centers = 4, nstart = 25)
+k4 <- kmeans(df_scaled2, centers = 4, nstart = 25)
 
-fviz_cluster(k4, data = df)
+fviz_cluster(k4, data = df_scaled2)
 ```
 
 **Método de la silueta**
@@ -459,15 +517,17 @@ donde $a(x_i)$ es la media de las distancias de la observación $x_i$ a los punt
 Es posible realizar análisis de agrupamiento con diferente número de clústeres y comparar en cada uno de esos análisis los valores de Silhoutte obtenidos.
 
 ```{r}
-fviz_nbclust(df, kmeans, method = "silhouette")
+fviz_nbclust(df_scaled2, kmeans, method = "silhouette")
 
 ```
 
-Con esta técnica, en nuestros datos de ejemplo, parece ser que la mejor elección es $k$ igual a $2$.
+Con esta técnica, en nuestros datos de ejemplo, parece ser que la mejor elección es $k$ igual a $3$.
 
 ```{r}
 library(cluster)
-sil <- silhouette(k2$cluster, dist(df))
+k3 <- kmeans(df_scaled2, centers = 3, nstart = 25)
+
+sil <- silhouette(k3$cluster, dist(df_scaled2))
 fviz_silhouette(sil)
 ```
 
@@ -493,7 +553,7 @@ Existe una función en R que realiza todo este proceso. En los datos de ejemplo:
 
 ```{r}
 set.seed(123)
-gap_stat <- clusGap(df, FUN = kmeans, nstart = 25,
+gap_stat <- clusGap(df_scaled2, FUN = kmeans, nstart = 25,
                     K.max = 10, B = 50)
 
 print(gap_stat, method = "firstmax")
@@ -501,12 +561,12 @@ fviz_gap_stat(gap_stat)
 
 ```
 
-Aparéntemente $3$ es el número óptimo de clusters.
+Supongamos que $4$ es el número óptimo de clusters.
 
 ```{r}
-k3 <- kmeans(df, centers = 3, nstart = 25)
+k4 <- kmeans(df_scaled2, centers = 4, nstart = 25)
 
-fviz_cluster(k3, data = df)
+fviz_cluster(k4, data = df_scaled2)
 ```
 
 ::: callout-caution
@@ -517,14 +577,14 @@ El paquete `NbClust` proporciona **30 (treinta!!!)** índices para determinar el
 
 ```{r}
 library("NbClust")
-nb <- NbClust(df, distance = "euclidean", min.nc = 2,
+nb <- NbClust(df_scaled2, distance = "euclidean", min.nc = 2,
         max.nc = 10, method = "kmeans")
 ```
 
 ```{r}
 library(parameters)
-
-n_clust <- n_clusters(as.data.frame(df),
+#
+n_clust <- n_clusters(as.data.frame(df_scaled2),
   package = c("easystats", "NbClust", "mclust"),
   standardize = FALSE)
 n_clust
@@ -533,11 +593,12 @@ plot(n_clust)
 
 Creemos que te ha quedado claro que no existe una regla única para la elección del número óptimo de clústeres. Al contrario, hay muchos métodos para estimar el mejor número de clústeres y, obviamente, no todos ellos dan el mismo resultado. Se recomienda considerar los resultados de diferentes métodos y explorar varios números de clústeres buscando siempre una coherente interpretación de los resultados.
 
-En el ejemplo, eligiendo $4$ (quizás no sea la elección más evidente, pero ¿será interpretable?) como el número de clusters, podemos obtener los resultados finales tratando de nombrar los clusters:
+En el ejemplo, eligiendo $3$ (quizás no sea la elección más evidente, pero ¿será interpretable?) como el número de clusters, podemos obtener los resultados finales tratando de nombrar los clusters:
 
 ```{r}
-USArrests %>%
-  mutate(Cluster = k4$cluster) %>%
+df_scaled2=as.data.frame(df_scaled2)
+df_scaled2 %>%
+  mutate(Cluster = k3$cluster) %>%
   group_by(Cluster) %>%
   summarise_all("mean")
 ```
@@ -545,10 +606,10 @@ USArrests %>%
 ```{r}
 library(parameters)
 
-res_kmeans <- cluster_analysis(df,
-  n = 4,
+res_kmeans <- cluster_analysis(df_scaled2,
+  n = 3,
   method = "kmeans"
-)
+ )
 
 plot(summary(res_kmeans))
 
@@ -595,13 +656,11 @@ El clustering aglomerativo comienza con $n$ conglomerados (uno por cada dato) y,
 Se necesita un criterio de conexión o "*linkage*" que especifique cómo se determina el parecido (o la disimilitud) entre dos clústeres. Este criterio no es único. Algunos de los criterios más comunes son:
 
 ::: {.callout-note title="Método de Ward"}
-## Método de Ward
 
 Minimiza la suma de las diferencias cuadradas dentro de los clústeres. Minimiza la varianza total dentro del conglomerado.
 :::
 
 ::: {.callout-note title="Agrupamiento de enlace completo"}
-## Agrupamiento de enlace completo
 
 Minimiza la disimilitud máxima entre las observaciones de dos clústeres. Calcula todas las disimilitudes por pares entre los elementos del conglomerado A y los elementos del conglomerado B, y considera el mayor valor (es decir, el valor máximo) de estas disimilitudes como la distancia entre los dos conglomerados
 
@@ -613,7 +672,6 @@ Tiende a producir clusters más compactos.
 :::
 
 ::: {.callout-note title="Agrupamiento de enlace promedio"}
-## Agrupamiento de enlace promedio
 
 Minimiza el promedio de las disimilitudes entre las observaciones de dos clústeres. Calcula todas las disimilitudes por pares entre los elementos del conglomerado A y los elementos del conglomerado B, y considera la media de estas disimilitudes como la distancia entre los dos conglomerados:
 
@@ -625,7 +683,6 @@ siendo $n_A$ y $n_B$ el número de elementos en los grupos $A$ y $B$, respectiva
 :::
 
 ::: {.callout-note title="Agrupamiento de enlace mínimo o simple"}
-## Agrupamiento de enlace mínimo o simple
 
 Minimiza las disimilitudes entre las observaciones más cercanas de dos clústeres. Es decir, calcula todas las disimilitudes por pares entre los elementos del conglomerado A y los elementos del conglomerado B, y considera la menor de estas disimilitudes como criterio de vinculación
 
@@ -637,7 +694,6 @@ Tiende a producir clusters largos y "dispersos".
 :::
 
 ::: {.callout-note title="Agrupamiento de enlace de centroides"}
-## Agrupamiento de enlace de centroides
 
 Calcula la disimilitud entre el centroide del conglomerado A y el centroide del conglomerado B. Agrupación de enlace de centroides.
 :::
@@ -675,7 +731,7 @@ Existen diferentes funciones disponibles en R para calcular el clustering jerár
 
 ```{r}
 # Clustering jerárquico usando enlace completo
-hc2 <- agnes(df, method = "complete" )
+hc2 <- agnes(df_scaled2, method = "complete" )
 
 hc2$ac
 ```
@@ -691,7 +747,7 @@ names(m) <- c( "average", "single", "complete", "ward")
 
 # Función para calcular el coeficiente de agrupamiento
 ac <- function(x) {
-  agnes(df, method = x)$ac
+  agnes(df_scaled2, method = x)$ac
 }
 
 map_dbl(m, ac)
@@ -701,7 +757,7 @@ En ocasiones se emplea una representación gráfica en forma de árbol llamada *
 
 ```{r}
 # Matriz de disimilaridades
-d <- dist(df, method = "euclidean")
+d <- dist(df_scaled2, method = "euclidean")
 
 # Clustering jerárquico usando enlace completo
 hc1 <- hclust(d, method = "complete" )
@@ -713,7 +769,7 @@ plot(hc1, cex = 0.6, hang = -1)
 Fíjate cómo obtenemos diferentes resultados según el método propuesto.
 
 ```{r}
-hc2 <- agnes(df, method = "ward" )
+hc2 <- agnes(df_scaled2, method = "ward" )
 
 # Drendrograma
 pltree(hc2, cex = 0.6, hang = -1, main = "Dendrograma de AGNES") 
@@ -725,7 +781,7 @@ A continuación aplicamos el método divisivo.
 
 ```{r}
 # Clustering jerárquico divisivo
-hc4 <- diana(df)
+hc4 <- diana(df_scaled2)
 
 # Coeficiente de división; cantidad de estructura de agrupación encontrada
 hc4$dc
@@ -760,7 +816,7 @@ rect.hclust(hc5, k = 4, border = 2:5)
 table(sub_grp)
 
 # Visualización
-fviz_cluster(list(data=df,cluster=sub_grp))
+fviz_cluster(list(data=df_scaled2,cluster=sub_grp))
 ```
 
 Podemos ir un paso más allá y comparar dos dendrogramas. En este ejemplo comparamos los resultados obtenidos con el método de "Ward" frente al "completo".
@@ -773,7 +829,7 @@ Podemos ir un paso más allá y comparar dos dendrogramas. En este ejemplo compa
 library(dendextend)
 
 # Matriz de distancias
-res.dist <- dist(df, method = "euclidean")
+res.dist <- dist(df_scaled2, method = "euclidean")
 
 # Calcuamos los dos clustering jerárquicos
 hc1 <- hclust(res.dist, method = "complete")
@@ -809,16 +865,15 @@ fviz_nbclust(df, FUN = hcut, method = "wss")
 En el ejemplo propuesto, elegir $4$ como número óptimo parece una buena elección. Sin embargo, y como pasaba en los métodos no jerárquicos, métodos alternativos pueden llevarnos a soluciones alternativas.
 
 ```{r}
-fviz_nbclust(df, FUN = hcut, method = "silhouette")
+#fviz_nbclust(df, FUN = hcut, method = "silhouette")
 ```
 
 ```{r}
-gap_stat <- clusGap(df, FUN = hcut, nstart = 25, K.max = 10, B = 50)
-fviz_gap_stat(gap_stat)
+#gap_stat <- clusGap(df, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+#fviz_gap_stat(gap_stat)
 ```
 
 ::: {.callout-note collapse="true" title="Ventajas del clustering jerárquico"}
-## Ventajas del clustering jerárquico
 
 -   **Jerarquía de clusters**: El clustering jerárquico crea una jerarquía de clusters que permite analizar los datos a diferentes niveles de granularidad. Es posible, por tanto, explorar tanto clusters globales como subgrupos más específicos. Al tener una jerarquía de clusters, puedes tomar decisiones a diferentes niveles de detalle. Esto es valioso para la segmentación de mercado, la taxonomía de especies, la organización de documentos, entre otros.
 
@@ -836,7 +891,6 @@ fviz_gap_stat(gap_stat)
 :::
 
 ::: {.callout-note collapse="true" title="Desventajas del clustering jerárquico"}
-## Desventajas del clustering jerárquico
 
 -   **Requiere definir un criterio de corte**: Para convertir la jerarquía en clusters finales, es necesario definir un criterio de corte en el dendrograma. Esta elección puede ser subjetiva y afectar los resultados. Así mismo hay que definir el tipo de enlace a emplear (y la medida de disimilitud) Cada una de estas decisiones puede influir mucho en los resultados obtenidos. En la práctica, probamos varias opciones diferentes y buscamos la que ofrece la solución más útil o interpretable.
 
@@ -882,7 +936,6 @@ Es decir, se presentan los datos al SOM, y cada dato se asigna a la neurona cuyo
 Después del entrenamiento, las neuronas en el mapa SOM que están cerca una de la otra representan clusters de datos. Los datos que se asignaron a estas neuronas durante el entrenamiento se consideran miembros de un mismo cluster. Los SOM tienen propiedades interesantes como la preservación topológica, garantizando que las neuronas cercanas en la malla tendrán pesos similares.
 
 ::: {.callout-note collapse="true" title="Función objetivo"}
-# Función objetivo y descenso del gradiente
 
 El algoritmo de entrenamiento de los Mapas de Kohonen (SOM) puede entenderse como un proceso de minimización de una función de coste mediante descenso de gradiente.
 
@@ -920,7 +973,6 @@ Aquí vemos que la actualización de los pesos se mueve en dirección a $\mathbf
 :::
 
 ::: {.callout-note collapse="true" title="Ventajas"}
-## Ventajas
 
 -   **Topología preservada**: Una ventaja clave de los SOM en el clustering es que preservan la topología de los datos. Esto significa que los clusters en el SOM reflejan la estructura de vecindad en los datos originales, lo que facilita la interpretación de los resultados.
 
@@ -936,7 +988,6 @@ Aquí vemos que la actualización de los pesos se mueve en dirección a $\mathbf
 :::
 
 ::: {.callout-note collapse="true" title="Desventajas"}
-## Desventajas
 
 -   **Sensibilidad a la inicialización**: Los SOM son sensibles a la inicialización de los pesos de las neuronas. Los resultados pueden variar significativamente según cómo se configuren los pesos iniciales, lo que significa que pueden converger a soluciones subóptimas si no se seleccionan adecuadamente los valores iniciales.
 
